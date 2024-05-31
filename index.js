@@ -259,7 +259,7 @@ app.get("/callback", async (req, res) => {
     console.log("Create DB: ");
 
 
-    await db.createDB();
+    // await db.createDB();
     await getConnection();
 
     console.log("GET REFRESH TOKEN");
@@ -376,6 +376,7 @@ app.get("/getRefreshToken", async (req, res) => {
 //   });
 // });
 
+// db.createDB()
 // db.dropDB();
 // app.listen(PORT, () => {
 //   console.log(`Server is running on port ${PORT}`);
