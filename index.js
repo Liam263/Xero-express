@@ -314,12 +314,10 @@ const getConnection = async (req, res) => {
         );
 
         for (account of accountTypes) {
-          await db.AccountTypes.findOrCreate({
-            where: { account_type: account.code },
-            defaults: {
+          await db.AccountTypes.upsert({
+              account_type: account.code,
               entity_id: tenant.tenantId,
               account_class_type: null, // change this later
-            },
           }, {transaction: t});
         }
       }
