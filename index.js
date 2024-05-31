@@ -270,7 +270,7 @@ app.get("/callback", async (req, res) => {
 });
 
 //Check the tenants u have authorized to access
-const getConnection=   async (req, res) => {
+const getConnection =   async (req, res) => {
   try {
     const response = await axios.get("https://api.xero.com/connections", {
       headers: {

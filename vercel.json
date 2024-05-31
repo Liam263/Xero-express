@@ -16,11 +16,11 @@
     "crons": [
         {
           "path": "/getData",
-          "schedule": "*/30 * * * * *"
+          "schedule": "* * * * *"
         },
         {
             "path" : "/getRefreshToken",
-            "schedule": "*/30 * * * * *"
+            "schedule": "* * * * *"
         }
       ]
    }
