@@ -254,9 +254,12 @@ app.get("/callback", async (req, res) => {
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
 
+    console.log("GET REFRESH TOKEN")
     jobGetRefreshToken.start();
     getConnection()
+    console.log("GET REFRESH DATA")
     jobGetData.start()
+    console.log("Complete");
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: error.response });
