@@ -335,6 +335,7 @@ const BankTransactions = sequelize.define('Bank_Transactions', {
 const test = async () => {
 
   await sequelize.sync()
+  console.log('Reach create DB')
 }
 
 const dropDB = async () => {
