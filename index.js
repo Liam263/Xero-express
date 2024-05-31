@@ -190,7 +190,7 @@ const getData =  async (req, res) => {
   }
 };
 
-app.get("/hello", async (req, res) => {res.render("hello")})
+app.get("/hello", async (req, res) => {res.send("hello")})
 app.get("/drop", async (req, res) => {
   try {
     await db.BankTransactions.drop();
@@ -255,7 +255,7 @@ app.get("/callback", async (req, res) => {
     user.customer_name = payloadData.name;
 
     console.log("Create DB: ")
-    db.createDB();
+    await db.createDB();
 
     console.log("GET REFRESH TOKEN")
     jobGetRefreshToken.start();
@@ -348,7 +348,7 @@ const jobGetData = cron.schedule('*/30 * * * * *', getData, {scheduled:false})
 // 10s for development, will be 30min day in production
 const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {scheduled:false})
 
-// db.test().then(() => {
+// db.create().then(() => {
 //   app.listen(PORT, () => {
 //     console.log(`Server is running on port ${PORT}`);
 //   });
@@ -362,7 +362,7 @@ const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {sch
 
 //   })
 // });
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+//   });
 module.exports = app;
