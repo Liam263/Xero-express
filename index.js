@@ -255,7 +255,8 @@ app.get("/callback", async (req, res) => {
     user.customer_name = payloadData.name;
 
     console.log("Create DB: ")
-    db.test();
+    db.createDB();
+
     console.log("GET REFRESH TOKEN")
     jobGetRefreshToken.start();
     getConnection()
@@ -361,5 +362,7 @@ const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {sch
 
 //   })
 // });
-
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 module.exports = app;

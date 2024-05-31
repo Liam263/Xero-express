@@ -332,7 +332,7 @@ const BankTransactions = sequelize.define('Bank_Transactions', {
 
 
 
-const test = async () => {
+const createDB = async () => {
 
   await sequelize.sync()
   console.log('Reach create DB')
@@ -351,7 +351,7 @@ const dropDB = async () => {
 
 module.exports = {
   query: (text, params) => pool.query(text, params),
-   test,dropDB, Customer, Assets, AccountTypes,
+   createDB,dropDB, Customer, Assets, AccountTypes,
    BankTransactions, ChartOfAccounts, Entity,
    EntityAccountsMap, SystemAccountStandard
 };
