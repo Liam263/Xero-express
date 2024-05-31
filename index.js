@@ -76,11 +76,12 @@ app.get("/getData", async (req, res) => {
           },
         }),
       ]);
-    await sequelize.authenticate();
 
     const assets = assetsResponse.data.items;
     const accounts = accountsResponse.data.Accounts;
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
+
+    const t = await sequelize.transaction();
 
     for (const item of assets) {
       await db.Assets.upsert({
@@ -128,7 +129,7 @@ app.get("/getData", async (req, res) => {
         current_accum_depreciation_amount: item.bookDepreciationDetail
           ? item.bookDepreciationDetail.currentAccumDepreciationAmount
           : null,
-      });
+      }, { transaction: t});
     }
 
     for (const account of accounts) {
@@ -141,7 +142,7 @@ app.get("/getData", async (req, res) => {
         account_description: account.Description ? account.Description : null,
         tax_type: account.TaxType,
         account_status: account.Status,
-      });
+      }, {transaction: t});
     }
 
     for (const transaction of bankTransactions) {
@@ -181,12 +182,14 @@ app.get("/getData", async (req, res) => {
         sub_total: transaction.SubTotal,
         total_tax: transaction.TotalTax,
         total_amount: transaction.Total,
-      });
+      },{transaction: t});
     }
+
+    await t.commit();
     // res.send("successful");
   } catch (error) {
     console.log(error);
-    res.send("ERROR");
+    await t.rollback();
   }
 });
 
