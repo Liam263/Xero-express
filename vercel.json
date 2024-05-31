@@ -4,7 +4,10 @@
      {
       "src": "index.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
+      "config": { "includeFiles": ["dist/**"] },
+      "/*": {
+        "maxDuration": 60
+    }
      }
     ],
 
@@ -24,11 +27,7 @@
           "path" : "/getRefreshToken",
           "schedule": "5 0 * * *"
         }
-      ],
+      ]
 
-    "functions": {
-        "/*": {
-            "maxDuration": 60
-        }
-    }
+   
    }

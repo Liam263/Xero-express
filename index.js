@@ -378,8 +378,8 @@ app.get("/getRefreshToken", async (req, res) => {
 //   });
 // });
 
-// db.createDB()
 // db.dropDB();
+// db.createDB()
 // app.listen(PORT, () => {
 //   console.log(`Server is running on port ${PORT}`);
 //   cron.schedule('*/30 * * * * *', () => {
