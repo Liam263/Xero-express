@@ -258,10 +258,10 @@ app.get("/callback", async (req, res) => {
     await db.createDB();
 
     console.log("GET REFRESH TOKEN")
-    jobGetRefreshToken.start();
+    // jobGetRefreshToken.start();
     getConnection()
     console.log("GET REFRESH DATA")
-    jobGetData.start()
+    // jobGetData.start()
     console.log("Complete");
     res.json(response.data);
   } catch (error) {
