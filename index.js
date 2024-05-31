@@ -255,11 +255,13 @@ app.get("/callback", async (req, res) => {
     user.customer_name = payloadData.name;
 
     console.log("Create DB: ")
-    await db.createDB();
-
+    
+    await Promise.all([
+      db.createDB(),
+      getConnection()
+    ])
     console.log("GET REFRESH TOKEN")
     // jobGetRefreshToken.start();
-    await getConnection()
     console.log("GET REFRESH DATA")
     // jobGetData.start()
     console.log("Complete");
