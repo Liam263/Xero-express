@@ -4,18 +4,13 @@
      {
       "src": "index.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
-      
+      "config": { "includeFiles": ["dist/**"] },
+      "/**/*.js": {
+        "maxDuration": 60
+    }
      }
     ],
 
-    "functions": {
-        "/**/*.js": {
-            "maxDuration": 60
-        }
-    
-  },
-  
     "routes": [
      {
       "src": "/(.*)",
