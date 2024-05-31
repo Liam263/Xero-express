@@ -49,7 +49,7 @@ function parseXeroTimestamp(xeroTimestamp) {
 
   return new Date(timestamp);
 }
-app.get('/getData',  async (req, res) => {
+app.get("/getData", async (req, res) => {
   try {
     console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
     console.log("ENTITY_ID: ", ENTITY_ID);
@@ -190,7 +190,9 @@ app.get('/getData',  async (req, res) => {
   }
 });
 
-app.get("/hello", async (req, res) => {res.send("hello")})
+app.get("/hello", async (req, res) => {
+  res.send("hello");
+});
 app.get("/drop", async (req, res) => {
   try {
     await db.BankTransactions.drop();
@@ -235,8 +237,8 @@ app.get("/callback", async (req, res) => {
     const idToken = response.data.id_token;
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    console.warn("ACCESS TOKE AT FIRST: ",ACCESS_TOKEN)
-    console.warn("REFRESH TOKE AT FIRST:  ",REFRESH_TOKEN);
+    console.warn("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
+    console.warn("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
     const [headerAccess, payloadAccess, signatureAccess] =
@@ -254,15 +256,13 @@ app.get("/callback", async (req, res) => {
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
 
-    console.log("Create DB: ")
-    
-    await Promise.all([
-      db.createDB(),
-      getConnection()
-    ])
-    console.log("GET REFRESH TOKEN")
+    console.log("Create DB: ");
+
+    await Promise.all([db.createDB(), getConnection()]);
+
+    console.log("GET REFRESH TOKEN");
     // jobGetRefreshToken.start();
-    console.log("GET REFRESH DATA")
+    console.log("GET REFRESH DATA");
     // jobGetData.start()
     console.log("Complete");
     res.json(response.data);
@@ -272,7 +272,7 @@ app.get("/callback", async (req, res) => {
 });
 
 //Check the tenants u have authorized to access
-const getConnection =   async (req, res) => {
+const getConnection = async (req, res) => {
   try {
     const response = await axios.get("https://api.xero.com/connections", {
       headers: {
@@ -286,27 +286,45 @@ const getConnection =   async (req, res) => {
       "\ncustomer_name: ",
       user.customer_name
     );
-    await db.Customer.upsert({
-      customer_id: user.customer_id,
-      name: user.customer_name,
-    });
 
-    for (tenant of response.data) {
-      await db.Entity.upsert({
-        entity_id: tenant.tenantId,
-        name: tenant.tenantName,
-        customer_id: user.customer_id,
-      });
+    const t = await sequelize.transaction();
+    try {
+      await db.Customer.upsert(
+        {
+          customer_id: user.customer_id,
+          name: user.customer_name,
+        },
+        {
+          transaction: t,
+        }
+      );
 
-      for (account of accountTypes) {
-        await db.AccountTypes.findOrCreate({
-          where: { account_type: account.code },
-          defaults: {
+      for (tenant of response.data) {
+        await db.Entity.upsert(
+          {
             entity_id: tenant.tenantId,
-            account_class_type: null, // change this later
+            name: tenant.tenantName,
+            customer_id: user.customer_id,
           },
-        });
+          {
+            transaction: t,
+          }
+        );
+
+        for (account of accountTypes) {
+          await db.AccountTypes.findOrCreate({
+            where: { account_type: account.code },
+            defaults: {
+              entity_id: tenant.tenantId,
+              account_class_type: null, // change this later
+            },
+          }, {transaction: t});
+        }
       }
+
+      await t.commit();
+    } catch (error) {
+      await t.rollback();
     }
 
     //Choose Demo Company data for populating
@@ -318,7 +336,7 @@ const getConnection =   async (req, res) => {
   }
 };
 
-app.get('/getRefreshToken',  async (req, res) => {
+app.get("/getRefreshToken", async (req, res) => {
   try {
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
@@ -336,8 +354,8 @@ app.get('/getRefreshToken',  async (req, res) => {
 
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    console.warn("ACCESS TOKE after refresh: ",ACCESS_TOKEN)
-    console.warn("REFRESH TOKE after refresh:  ",REFRESH_TOKEN);
+    console.warn("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
+    console.warn("REFRESH TOKE after refresh:  ", REFRESH_TOKEN);
     // res.json(response.data);
   } catch (error) {
     console.log(error);
