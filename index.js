@@ -254,6 +254,8 @@ app.get("/callback", async (req, res) => {
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
 
+    console.log("Create DB: ")
+    db.test();
     console.log("GET REFRESH TOKEN")
     jobGetRefreshToken.start();
     getConnection()
@@ -345,11 +347,11 @@ const jobGetData = cron.schedule('*/30 * * * * *', getData, {scheduled:false})
 // 10s for development, will be 30min day in production
 const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {scheduled:false})
 
-db.test().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-});
+// db.test().then(() => {
+//   app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+//   });
+// });
 
 // db.dropDB();
 // app.listen(PORT, () => {
