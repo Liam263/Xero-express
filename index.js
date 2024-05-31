@@ -259,7 +259,7 @@ app.get("/callback", async (req, res) => {
 
     console.log("GET REFRESH TOKEN")
     // jobGetRefreshToken.start();
-    getConnection()
+    await getConnection()
     console.log("GET REFRESH DATA")
     // jobGetData.start()
     console.log("Complete");
