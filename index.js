@@ -326,6 +326,7 @@ const getConnection = async (req, res) => {
 
       await t.commit();
     } catch (error) {
+      console.error(error);
       await t.rollback();
     }
 
