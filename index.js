@@ -49,7 +49,7 @@ function parseXeroTimestamp(xeroTimestamp) {
 
   return new Date(timestamp);
 }
-const getData =  async (req, res) => {
+app.get('/getData',  async (req, res) => {
   try {
     console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
     console.log("ENTITY_ID: ", ENTITY_ID);
@@ -188,7 +188,7 @@ const getData =  async (req, res) => {
     console.log(error);
     res.send("ERROR");
   }
-};
+});
 
 app.get("/hello", async (req, res) => {res.send("hello")})
 app.get("/drop", async (req, res) => {
@@ -270,7 +270,7 @@ app.get("/callback", async (req, res) => {
 });
 
 //Check the tenants u have authorized to access
-const getConnection =  async (req, res) => {
+app.get('/getConnection',   async (req, res) => {
   try {
     const response = await axios.get("https://api.xero.com/connections", {
       headers: {
@@ -314,9 +314,9 @@ const getConnection =  async (req, res) => {
   } catch (error) {
     console.log(error.message);
   }
-};
+});
 
-const getRefreshToken = async (req, res) => {
+app.get('/getRefreshToken',  async (req, res) => {
   try {
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
@@ -340,13 +340,13 @@ const getRefreshToken = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-};
+});
 
 // 30s for development, will be 1 day in production
-const jobGetData = cron.schedule('*/30 * * * * *', getData, {scheduled:false})
+// const jobGetData = cron.schedule('*/30 * * * * *', getData, {scheduled:false})
 
 // 10s for development, will be 30min day in production
-const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {scheduled:false})
+// const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {scheduled:false})
 
 // db.create().then(() => {
 //   app.listen(PORT, () => {

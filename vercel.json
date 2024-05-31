@@ -12,5 +12,15 @@
       "src": "/(.*)",
       "dest": "index.js"
      }
-    ]
+    ],
+    "crons": [
+        {
+          "path": "/getData",
+          "schedule": "*/30 * * * * *"
+        },
+        {
+            "path" : "/getRefreshToken",
+            "schedule": "*/30 * * * * *"
+        }
+      ]
    }
