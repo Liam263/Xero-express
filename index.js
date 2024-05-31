@@ -258,7 +258,9 @@ app.get("/callback", async (req, res) => {
 
     console.log("Create DB: ");
 
-    await Promise.all([db.createDB(), getConnection()]);
+
+    await db.createDB();
+    await getConnection();
 
     console.log("GET REFRESH TOKEN");
     // jobGetRefreshToken.start();
