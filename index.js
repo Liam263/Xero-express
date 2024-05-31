@@ -356,3 +356,5 @@ db.test().then(() => {
 
 //   })
 // });
+
+module.exports = app;
