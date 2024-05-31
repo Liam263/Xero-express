@@ -1,6 +1,12 @@
 {
     "version": 2,
-    
+    "builds": [
+     {
+      "src": "index.js",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["dist/**"] }
+     }
+    ],
     "functions": {
         "/**/*.js": {
             "maxDuration": 60
