@@ -51,7 +51,7 @@ function parseXeroTimestamp(xeroTimestamp) {
 }
 app.get("/getData", async (req, res) => {
   try {
-    
+   
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
@@ -131,7 +131,19 @@ app.get("/getData", async (req, res) => {
         })),
         { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
       ),
-      
+      db.ChartOfAccounts.bulkCreate(
+        accounts.map(account => ({
+          account_id: account.AccountID,
+          entity_id: ENTITY_ID,
+          account_type: account.Type,
+          account_name: account.Name,
+          account_code: account.Code,
+          account_description: account.Description ? account.Description : null,
+          tax_type: account.TaxType,
+          account_status: account.Status,
+        })),
+        { updateOnDuplicate: ["account_id", "entity_id"], transaction: t }
+      ),
       db.BankTransactions.bulkCreate(
         bankTransactions.map(transaction => ({
           entity_id: ENTITY_ID,
@@ -177,7 +189,7 @@ app.get("/getData", async (req, res) => {
     await t.commit();
     // res.send("successful");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     await t.rollback();
   }
 });
@@ -274,13 +286,7 @@ const getConnection = async (req, res) => {
         Authorization: "Bearer " + ACCESS_TOKEN,
       },
     });
-    console.log(
-      "customer_id: ",
-      user.customer_id,
-      "\ncustomer_name: ",
-      user.customer_name
-    );
-
+   
     const t = await sequelize.transaction();
     try {
       await db.Customer.upsert(
