@@ -289,7 +289,7 @@ app.get("/getData", async (req, res) => {
     }
 
     await t.commit();
-    res.send("successful");
+    res.json(bankTransactions);
   } catch (error) {
     console.log(error);
     // await t.rollback();
