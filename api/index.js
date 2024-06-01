@@ -84,55 +84,55 @@ app.get("/getData", async (req, res) => {
     const t = await sequelize.transaction();
 
     await Promise.all([
-      // db.Assets.bulkCreate(
-      //   assets.map(item => ({
-      //     entity_id: ENTITY_ID,
-      //     asset_id: item.assetId,
-      //     name: item.assetName,
-      //     asset_number: item.assetNumber,
-      //     purchase_date: item.purchaseDate,
-      //     purchase_price: item.purchasePrice,
-      //     disposal_price: item.disposalPrice,
-      //     asset_status: item.assetStatus,
-      //     depreciation_calculation_method: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.depreciationCalculationMethod
-      //       : null,
-      //     depreciation_method: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.depreciationMethod
-      //       : null,
-      //     average_method: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.averagingMethod
-      //       : null,
-      //     depreciation_rate: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.depreciationRate
-      //       : null,
-      //     effective_life_years: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.effectiveLifeYears
-      //       : null,
-      //     current_capital_gain: item.bookDepreciationDetail
-      //       ? item.bookDepreciationDetail.currentCapitalGain
-      //       : null,
-      //     current_capital_lost: item.bookDepreciationDetail
-      //       ? item.bookDepreciationDetail.currentCapitalLoss
-      //       : null,
-      //     depreciation_start_date: item.bookDepreciationDetail
-      //       ? item.bookDepreciationDetail.depreciationStartDate
-      //       : null,
-      //     cost_limits: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.costLimit
-      //       : null,
-      //     asset_residual_value: item.bookDepreciationSetting
-      //       ? item.bookDepreciationSetting.residualValue
-      //       : null,
-      //     prior_accum_depreciation_amount: item.bookDepreciationDetail
-      //       ? item.bookDepreciationDetail.priorAccumDepreciationAmount
-      //       : null,
-      //     current_accum_depreciation_amount: item.bookDepreciationDetail
-      //       ? item.bookDepreciationDetail.currentAccumDepreciationAmount
-      //       : null,
-      //   })),
-      //   { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
-      // ),
+      db.Assets.bulkCreate(
+        assets.map(item => ({
+          entity_id: ENTITY_ID,
+          asset_id: item.assetId,
+          name: item.assetName,
+          asset_number: item.assetNumber,
+          purchase_date: item.purchaseDate,
+          purchase_price: item.purchasePrice,
+          disposal_price: item.disposalPrice,
+          asset_status: item.assetStatus,
+          depreciation_calculation_method: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.depreciationCalculationMethod
+            : null,
+          depreciation_method: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.depreciationMethod
+            : null,
+          average_method: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.averagingMethod
+            : null,
+          depreciation_rate: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.depreciationRate
+            : null,
+          effective_life_years: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.effectiveLifeYears
+            : null,
+          current_capital_gain: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.currentCapitalGain
+            : null,
+          current_capital_lost: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.currentCapitalLoss
+            : null,
+          depreciation_start_date: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.depreciationStartDate
+            : null,
+          cost_limits: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.costLimit
+            : null,
+          asset_residual_value: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.residualValue
+            : null,
+          prior_accum_depreciation_amount: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.priorAccumDepreciationAmount
+            : null,
+          current_accum_depreciation_amount: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.currentAccumDepreciationAmount
+            : null,
+        })),
+        { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
+      ),
       db.ChartOfAccounts.bulkCreate(
         accounts.map(account => ({
           account_id: account.AccountID,
