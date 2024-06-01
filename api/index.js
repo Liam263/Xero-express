@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const db = require("./db/init");
+const db = require("../db/init");
 const { Sequelize } = require("sequelize");
 const cron = require("node-cron");
 require("dotenv").config();
