@@ -372,6 +372,7 @@ app.get("/callback", async (req, res) => {
     console.log("ENTITY ID:", ENTITY_ID)
     console.log("Complete");
     res.json(response.data);
+    redirectURL('/')
   } catch (error) {
     res.status(500).json({ error: error.response });
   }
