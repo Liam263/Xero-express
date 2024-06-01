@@ -190,7 +190,7 @@ app.get("/getData", async (req, res) => {
     // await t.commit();
     // res.send("successful");
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     // await t.rollback();
   }
 });
@@ -242,8 +242,7 @@ app.get("/callback", async (req, res) => {
     const idToken = response.data.id_token;
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    console.warn("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
-    console.warn("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
+    
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
     const [headerAccess, payloadAccess, signatureAccess] =
@@ -267,10 +266,9 @@ app.get("/callback", async (req, res) => {
     // await db.createDB();
     await getConnection();
 
-    console.log("GET REFRESH TOKEN");
-    // jobGetRefreshToken.start();
-    console.log("GET REFRESH DATA");
-    // jobGetData.start()
+    console.log("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
+    console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
+    console.log("ENTITY ID:", ENTITY_ID)
     console.log("Complete");
     res.json(response.data);
   } catch (error) {
@@ -354,8 +352,8 @@ app.get("/getRefreshToken", async (req, res) => {
 
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    console.warn("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
-    console.warn("REFRESH TOKE after refresh:  ", REFRESH_TOKEN);
+    console.log("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
+    console.log("REFRESH TOKE after refresh:  ", REFRESH_TOKEN);
     // res.json(response.data);
   } catch (error) {
     console.log(error);
