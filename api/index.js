@@ -51,9 +51,7 @@ function parseXeroTimestamp(xeroTimestamp) {
 }
 app.get("/getData", async (req, res) => {
   try {
-    console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
-    console.log("ENTITY_ID: ", ENTITY_ID);
-    await sequelize.authenticate();
+    
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
@@ -133,18 +131,46 @@ app.get("/getData", async (req, res) => {
         })),
         { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
       ),
-      db.ChartOfAccounts.bulkCreate(
-        accounts.map(account => ({
-          account_id: account.AccountID,
+      
+      db.BankTransactions.bulkCreate(
+        bankTransactions.map(transaction => ({
           entity_id: ENTITY_ID,
-          account_type: account.Type,
-          account_name: account.Name,
-          account_code: account.Code,
-          account_description: account.Description ? account.Description : null,
-          tax_type: account.TaxType,
-          account_status: account.Status,
+          transaction_id: transaction.BankTransactionID,
+          transaction_status: transaction.Status,
+          contact_id: transaction.Contact ? transaction.Contact.ContactID : null,
+          contact_name: transaction.Contact ? transaction.Contact.Name : null,
+          transaction_date: parseXeroTimestamp(transaction.Date),
+          bank_account_id: transaction.BankAccount
+            ? transaction.BankAccount.AccountID
+            : null,
+          account_code: transaction.BankAccount
+            ? transaction.BankAccount.Code
+            : null,
+          bank_account_name: transaction.BankAccount
+            ? transaction.BankAccount.Name
+            : null,
+          transaction_currency: transaction.CurrencyCode,
+          currency_rate: transaction.CurrencyRate
+            ? transaction.CurrencyRate
+            : null,
+          transaction_type: transaction.Type,
+          item_ID: transaction.LineItems
+            ? transaction.LineItems.LineItemID
+            : null,
+          item_description: transaction.LineItems
+            ? transaction.LineItems.Description
+            : null,
+          item_quantity: transaction.LineItems
+            ? transaction.LineItems.Quantity
+            : null,
+          item_unit_price: transaction.LineItems
+            ? transaction.LineItems.UnitAmount
+            : null,
+          sub_total: transaction.SubTotal,
+          total_tax: transaction.TotalTax,
+          total_amount: transaction.Total,
         })),
-        { updateOnDuplicate: ["account_id", "entity_id"], transaction: t }
+        { updateOnDuplicate: ["entity_id", "transaction_id"], transaction: t }
       )
     ]);
 
