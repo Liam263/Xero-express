@@ -78,8 +78,9 @@ app.get("/getData", async (req, res) => {
     const assets = assetsResponse.data.items;
     const accounts = accountsResponse.data.Accounts;
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
-
-    console.log(assets)
+    
+    console.log(assets);
+    res.send("success")
     // const t = await sequelize.transaction();
 
     // await Promise.all([
@@ -354,17 +355,12 @@ app.get("/getRefreshToken", async (req, res) => {
     REFRESH_TOKEN = response.data.refresh_token;
     console.log("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
     console.log("REFRESH TOKE after refresh:  ", REFRESH_TOKEN);
-    // res.json(response.data);
+    res.json(response.data);
   } catch (error) {
     console.log(error);
   }
 });
 
-// 30s for development, will be 1 day in production
-// const jobGetData = cron.schedule('*/30 * * * * *', getData, {scheduled:false})
-
-// 10s for development, will be 30min day in production
-// const jobGetRefreshToken = cron.schedule('*/10 * * * * *', getRefreshToken, {scheduled:false})
 
 // db.create().then(() => {
 //   app.listen(PORT, () => {
