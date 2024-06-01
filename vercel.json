@@ -4,8 +4,8 @@
      {
       "src": "index.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] ,
-                    "maxDuration": 60}
+      "config": { "includeFiles": ["dist/**"]},
+      "functions": { "maxDuration": 60}
      }
     ],
     
