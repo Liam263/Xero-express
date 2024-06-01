@@ -81,110 +81,212 @@ app.get("/getData", async (req, res) => {
     
     const t = await sequelize.transaction();
 
-    await Promise.all([
-      db.Assets.bulkCreate(
-        assets.map(item => ({
-          entity_id: ENTITY_ID,
-          asset_id: item.assetId,
-          name: item.assetName,
-          asset_number: item.assetNumber,
-          purchase_date: item.purchaseDate,
-          purchase_price: item.purchasePrice,
-          disposal_price: item.disposalPrice,
-          asset_status: item.assetStatus,
-          depreciation_calculation_method: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.depreciationCalculationMethod
-            : null,
-          depreciation_method: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.depreciationMethod
-            : null,
-          average_method: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.averagingMethod
-            : null,
-          depreciation_rate: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.depreciationRate
-            : null,
-          effective_life_years: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.effectiveLifeYears
-            : null,
-          current_capital_gain: item.bookDepreciationDetail
-            ? item.bookDepreciationDetail.currentCapitalGain
-            : null,
-          current_capital_lost: item.bookDepreciationDetail
-            ? item.bookDepreciationDetail.currentCapitalLoss
-            : null,
-          depreciation_start_date: item.bookDepreciationDetail
-            ? item.bookDepreciationDetail.depreciationStartDate
-            : null,
-          cost_limits: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.costLimit
-            : null,
-          asset_residual_value: item.bookDepreciationSetting
-            ? item.bookDepreciationSetting.residualValue
-            : null,
-          prior_accum_depreciation_amount: item.bookDepreciationDetail
-            ? item.bookDepreciationDetail.priorAccumDepreciationAmount
-            : null,
-          current_accum_depreciation_amount: item.bookDepreciationDetail
-            ? item.bookDepreciationDetail.currentAccumDepreciationAmount
-            : null,
-        })),
-        { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
-      ),
-      db.ChartOfAccounts.bulkCreate(
-        accounts.map(account => ({
-          account_id: account.AccountID,
-          entity_id: ENTITY_ID,
-          account_type: account.Type,
-          account_name: account.Name,
-          account_code: account.Code,
-          account_description: account.Description ? account.Description : null,
-          tax_type: account.TaxType,
-          account_status: account.Status,
-        })),
-        { updateOnDuplicate: ["account_id", "entity_id"], transaction: t }
-      ),
-      db.BankTransactions.bulkCreate(
-        bankTransactions.map(transaction => ({
-          entity_id: ENTITY_ID,
-          transaction_id: transaction.BankTransactionID,
-          transaction_status: transaction.Status,
-          contact_id: transaction.Contact ? transaction.Contact.ContactID : null,
-          contact_name: transaction.Contact ? transaction.Contact.Name : null,
-          transaction_date: parseXeroTimestamp(transaction.Date),
-          bank_account_id: transaction.BankAccount
-            ? transaction.BankAccount.AccountID
-            : null,
-          account_code: transaction.BankAccount
-            ? transaction.BankAccount.Code
-            : null,
-          bank_account_name: transaction.BankAccount
-            ? transaction.BankAccount.Name
-            : null,
-          transaction_currency: transaction.CurrencyCode,
-          currency_rate: transaction.CurrencyRate
-            ? transaction.CurrencyRate
-            : null,
-          transaction_type: transaction.Type,
-          item_ID: transaction.LineItems
-            ? transaction.LineItems.LineItemID
-            : null,
-          item_description: transaction.LineItems
-            ? transaction.LineItems.Description
-            : null,
-          item_quantity: transaction.LineItems
-            ? transaction.LineItems.Quantity
-            : null,
-          item_unit_price: transaction.LineItems
-            ? transaction.LineItems.UnitAmount
-            : null,
-          sub_total: transaction.SubTotal,
-          total_tax: transaction.TotalTax,
-          total_amount: transaction.Total,
-        })),
-        { updateOnDuplicate: ["entity_id", "transaction_id"], transaction: t }
-      )
-    ]);
+    // await Promise.all([
+    //   db.Assets.bulkCreate(
+    //     assets.map(item => ({
+    //       entity_id: ENTITY_ID,
+    //       asset_id: item.assetId,
+    //       name: item.assetName,
+    //       asset_number: item.assetNumber,
+    //       purchase_date: item.purchaseDate,
+    //       purchase_price: item.purchasePrice,
+    //       disposal_price: item.disposalPrice,
+    //       asset_status: item.assetStatus,
+    //       depreciation_calculation_method: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.depreciationCalculationMethod
+    //         : null,
+    //       depreciation_method: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.depreciationMethod
+    //         : null,
+    //       average_method: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.averagingMethod
+    //         : null,
+    //       depreciation_rate: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.depreciationRate
+    //         : null,
+    //       effective_life_years: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.effectiveLifeYears
+    //         : null,
+    //       current_capital_gain: item.bookDepreciationDetail
+    //         ? item.bookDepreciationDetail.currentCapitalGain
+    //         : null,
+    //       current_capital_lost: item.bookDepreciationDetail
+    //         ? item.bookDepreciationDetail.currentCapitalLoss
+    //         : null,
+    //       depreciation_start_date: item.bookDepreciationDetail
+    //         ? item.bookDepreciationDetail.depreciationStartDate
+    //         : null,
+    //       cost_limits: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.costLimit
+    //         : null,
+    //       asset_residual_value: item.bookDepreciationSetting
+    //         ? item.bookDepreciationSetting.residualValue
+    //         : null,
+    //       prior_accum_depreciation_amount: item.bookDepreciationDetail
+    //         ? item.bookDepreciationDetail.priorAccumDepreciationAmount
+    //         : null,
+    //       current_accum_depreciation_amount: item.bookDepreciationDetail
+    //         ? item.bookDepreciationDetail.currentAccumDepreciationAmount
+    //         : null,
+    //     })),
+    //     { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
+    //   ),
+    //   db.ChartOfAccounts.bulkCreate(
+    //     accounts.map(account => ({
+    //       account_id: account.AccountID,
+    //       entity_id: ENTITY_ID,
+    //       account_type: account.Type,
+    //       account_name: account.Name,
+    //       account_code: account.Code,
+    //       account_description: account.Description ? account.Description : null,
+    //       tax_type: account.TaxType,
+    //       account_status: account.Status,
+    //     })),
+    //     { updateOnDuplicate: ["account_id", "entity_id"], transaction: t }
+    //   ),
+    //   db.BankTransactions.bulkCreate(
+    //     bankTransactions.map(transaction => ({
+    //       entity_id: ENTITY_ID,
+    //       transaction_id: transaction.BankTransactionID,
+    //       transaction_status: transaction.Status,
+    //       contact_id: transaction.Contact ? transaction.Contact.ContactID : null,
+    //       contact_name: transaction.Contact ? transaction.Contact.Name : null,
+    //       transaction_date: parseXeroTimestamp(transaction.Date),
+    //       bank_account_id: transaction.BankAccount
+    //         ? transaction.BankAccount.AccountID
+    //         : null,
+    //       account_code: transaction.BankAccount
+    //         ? transaction.BankAccount.Code
+    //         : null,
+    //       bank_account_name: transaction.BankAccount
+    //         ? transaction.BankAccount.Name
+    //         : null,
+    //       transaction_currency: transaction.CurrencyCode,
+    //       currency_rate: transaction.CurrencyRate
+    //         ? transaction.CurrencyRate
+    //         : null,
+    //       transaction_type: transaction.Type,
+    //       item_ID: transaction.LineItems
+    //         ? transaction.LineItems.LineItemID
+    //         : null,
+    //       item_description: transaction.LineItems
+    //         ? transaction.LineItems.Description
+    //         : null,
+    //       item_quantity: transaction.LineItems
+    //         ? transaction.LineItems.Quantity
+    //         : null,
+    //       item_unit_price: transaction.LineItems
+    //         ? transaction.LineItems.UnitAmount
+    //         : null,
+    //       sub_total: transaction.SubTotal,
+    //       total_tax: transaction.TotalTax,
+    //       total_amount: transaction.Total,
+    //     })),
+    //     { updateOnDuplicate: ["entity_id", "transaction_id"], transaction: t }
+    //   )
+    // ]);
+
+    for (const item of assets) {
+      await db.Assets.upsert({
+        entity_id: ENTITY_ID,
+        asset_id: item.assetId,
+        name: item.assetName,
+        asset_number: item.assetNumber,
+        purchase_date: item.purchaseDate,
+        purchase_price: item.purchasePrice,
+        disposal_price: item.disposalPrice,
+        asset_status: item.assetStatus,
+        depreciation_calculation_method: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.depreciationCalculationMethod
+          : null,
+        depreciation_method: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.depreciationMethod
+          : null,
+        average_method: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.averagingMethod
+          : null,
+        depreciation_rate: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.depreciationRate
+          : null,
+        effective_life_years: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.effectiveLifeYears
+          : null,
+        current_capital_gain: item.bookDepreciationDetail
+          ? item.bookDepreciationDetail.currentCapitalGain
+          : null,
+        current_capital_lost: item.bookDepreciationDetail
+          ? item.bookDepreciationDetail.currentCapitalLoss
+          : null,
+        depreciation_start_date: item.bookDepreciationDetail
+          ? item.bookDepreciationDetail.depreciationStartDate
+          : null,
+        cost_limits: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.costLimit
+          : null,
+        asset_residual_value: item.bookDepreciationSetting
+          ? item.bookDepreciationSetting.residualValue
+          : null,
+        prior_accum_depreciation_amount: item.bookDepreciationDetail
+          ? item.bookDepreciationDetail.priorAccumDepreciationAmount
+          : null,
+        current_accum_depreciation_amount: item.bookDepreciationDetail
+          ? item.bookDepreciationDetail.currentAccumDepreciationAmount
+          : null,
+      }, { transaction: t});
+    }
+
+    for (const account of accounts) {
+      await db.ChartOfAccounts.upsert({
+        account_id: account.AccountID,
+        entity_id: ENTITY_ID,
+        account_type: account.Type,
+        account_name: account.Name,
+        account_code: account.Code,
+        account_description: account.Description ? account.Description : null,
+        tax_type: account.TaxType,
+        account_status: account.Status,
+      }, {transaction: t});
+    }
+
+    for (const transaction of bankTransactions) {
+      await db.BankTransactions.upsert({
+        entity_id: ENTITY_ID,
+        transaction_id: transaction.BankTransactionID,
+        transaction_status: transaction.Status,
+        contact_id: transaction.Contact ? transaction.Contact.ContactID : null,
+        contact_name: transaction.Contact ? transaction.Contact.Name : null,
+        transaction_date: parseXeroTimestamp(transaction.Date),
+        bank_account_id: transaction.BankAccount
+          ? transaction.BankAccount.AccountID
+          : null,
+        account_code: transaction.BankAccount
+          ? transaction.BankAccount.Code
+          : null,
+        bank_account_name: transaction.BankAccount
+          ? transaction.BankAccount.Name
+          : null,
+        transaction_currency: transaction.CurrencyCode,
+        currency_rate: transaction.CurrencyRate
+          ? transaction.CurrencyRate
+          : null,
+        transaction_type: transaction.Type,
+        item_ID: transaction.LineItems
+          ? transaction.LineItems.LineItemID
+          : null,
+        item_description: transaction.LineItems
+          ? transaction.LineItems.Description
+          : null,
+        item_quantity: transaction.LineItems
+          ? transaction.LineItems.Quantity
+          : null,
+        item_unit_price: transaction.LineItems
+          ? transaction.LineItems.UnitAmount
+          : null,
+        sub_total: transaction.SubTotal,
+        total_tax: transaction.TotalTax,
+        total_amount: transaction.Total,
+      },{transaction: t});
+    }
 
     await t.commit();
     res.send("successful");
