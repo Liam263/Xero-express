@@ -79,7 +79,8 @@ app.get("/getData", async (req, res) => {
     const accounts = accountsResponse.data.Accounts;
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
 
-    const t = await sequelize.transaction();
+    console.log(assets)
+    // const t = await sequelize.transaction();
 
     // await Promise.all([
     //   db.Assets.bulkCreate(
@@ -190,7 +191,7 @@ app.get("/getData", async (req, res) => {
     // res.send("successful");
   } catch (error) {
     console.log(error.message);
-    await t.rollback();
+    // await t.rollback();
   }
 });
 
