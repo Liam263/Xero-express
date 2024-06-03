@@ -1,3 +1,4 @@
+const { primaryKey } = require("drizzle-orm/pg-core");
 const { Pool } = require("pg");
 POSTGRES_URL="postgres://default:7XCd2GfbWSgD@ep-rough-cloud-a79cocee-pooler.ap-southeast-2.aws.neon.tech:5432/verceldb?sslmode=require"
 const { Sequelize , DataTypes, UUIDV4} = require('sequelize');
@@ -121,7 +122,8 @@ const Assets = sequelize.define('Assets', {
     references: {
       model: Entity,
       key: 'entity_id'
-    }
+    },
+    primaryKeypri:true
   },
   asset_id: {
     type: DataTypes.UUID,
@@ -211,6 +213,7 @@ const ChartOfAccounts = sequelize.define('Chart_of_accounts', {
   entity_id: {
     type: DataTypes.UUID,
     allowNull: false,
+    primaryKey: true
     // references: {
     //   model: EntityAccountsMap,
     //   key: 'entity_id'
@@ -252,6 +255,7 @@ const BankTransactions = sequelize.define('Bank_Transactions', {
   entity_id: {
     type: DataTypes.UUID,
     allowNull: false,
+    primaryKey: true
     // references: {
     //   model: ChartOfAccounts,
     //   key: 'entity_id'

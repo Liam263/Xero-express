@@ -55,21 +55,21 @@ app.get("/getData", async (req, res) => {
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
           headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            "Xero-Tenant-Id": ENTITY_ID,
+            Authorization: `Bearer ${user.access_token}`,
+            "Xero-Tenant-Id": user.tenant_id,
           },
           params: { status: "DRAFT", pageSize: 100 }, //could be Draft | Registered | Disposed
         }),
         axios.get(`https://api.xero.com/api.xro/2.0/Accounts`, {
           headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            "Xero-Tenant-Id": ENTITY_ID,
+            Authorization: `Bearer ${user.access_token}`,
+            "Xero-Tenant-Id": user.tenant_id,
           },
         }),
         axios.get(`https://api.xero.com/api.xro/2.0/BankTransactions`, {
           headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            "Xero-Tenant-Id": ENTITY_ID,
+            Authorization: `Bearer ${user.access_token}`,
+            "Xero-Tenant-Id": user.tenant_id,
           },
         }),
       ]);
@@ -80,111 +80,7 @@ app.get("/getData", async (req, res) => {
 
     const t = await sequelize.transaction();
 
-    // await Promise.all([
-    //   db.Assets.bulkCreate(
-    //     assets.map(item => ({
-    //       entity_id: ENTITY_ID,
-    //       asset_id: item.assetId,
-    //       name: item.assetName,
-    //       asset_number: item.assetNumber,
-    //       purchase_date: item.purchaseDate,
-    //       purchase_price: item.purchasePrice,
-    //       disposal_price: item.disposalPrice,
-    //       asset_status: item.assetStatus,
-    //       depreciation_calculation_method: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.depreciationCalculationMethod
-    //         : null,
-    //       depreciation_method: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.depreciationMethod
-    //         : null,
-    //       average_method: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.averagingMethod
-    //         : null,
-    //       depreciation_rate: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.depreciationRate
-    //         : null,
-    //       effective_life_years: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.effectiveLifeYears
-    //         : null,
-    //       current_capital_gain: item.bookDepreciationDetail
-    //         ? item.bookDepreciationDetail.currentCapitalGain
-    //         : null,
-    //       current_capital_lost: item.bookDepreciationDetail
-    //         ? item.bookDepreciationDetail.currentCapitalLoss
-    //         : null,
-    //       depreciation_start_date: item.bookDepreciationDetail
-    //         ? item.bookDepreciationDetail.depreciationStartDate
-    //         : null,
-    //       cost_limits: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.costLimit
-    //         : null,
-    //       asset_residual_value: item.bookDepreciationSetting
-    //         ? item.bookDepreciationSetting.residualValue
-    //         : null,
-    //       prior_accum_depreciation_amount: item.bookDepreciationDetail
-    //         ? item.bookDepreciationDetail.priorAccumDepreciationAmount
-    //         : null,
-    //       current_accum_depreciation_amount: item.bookDepreciationDetail
-    //         ? item.bookDepreciationDetail.currentAccumDepreciationAmount
-    //         : null,
-    //     })),
-    //     { updateOnDuplicate: ["entity_id", "asset_id"], transaction: t }
-    //   ),
-    //   db.ChartOfAccounts.bulkCreate(
-    //     accounts.map(account => ({
-    //       account_id: account.AccountID,
-    //       entity_id: ENTITY_ID,
-    //       account_type: account.Type,
-    //       account_name: account.Name,
-    //       account_code: account.Code,
-    //       account_description: account.Description ? account.Description : null,
-    //       tax_type: account.TaxType,
-    //       account_status: account.Status,
-    //     })),
-    //     { updateOnDuplicate: ["account_id", "entity_id"], transaction: t }
-    //   ),
-    //   db.BankTransactions.bulkCreate(
-    //     bankTransactions.map(transaction => ({
-    //       entity_id: ENTITY_ID,
-    //       transaction_id: transaction.BankTransactionID,
-    //       transaction_status: transaction.Status,
-    //       contact_id: transaction.Contact ? transaction.Contact.ContactID : null,
-    //       contact_name: transaction.Contact ? transaction.Contact.Name : null,
-    //       transaction_date: parseXeroTimestamp(transaction.Date),
-    //       bank_account_id: transaction.BankAccount
-    //         ? transaction.BankAccount.AccountID
-    //         : null,
-    //       account_code: transaction.BankAccount
-    //         ? transaction.BankAccount.Code
-    //         : null,
-    //       bank_account_name: transaction.BankAccount
-    //         ? transaction.BankAccount.Name
-    //         : null,
-    //       transaction_currency: transaction.CurrencyCode,
-    //       currency_rate: transaction.CurrencyRate
-    //         ? transaction.CurrencyRate
-    //         : null,
-    //       transaction_type: transaction.Type,
-    //       item_ID: transaction.LineItems
-    //         ? transaction.LineItems.LineItemID
-    //         : null,
-    //       item_description: transaction.LineItems
-    //         ? transaction.LineItems.Description
-    //         : null,
-    //       item_quantity: transaction.LineItems
-    //         ? transaction.LineItems.Quantity
-    //         : null,
-    //       item_unit_price: transaction.LineItems
-    //         ? transaction.LineItems.UnitAmount
-    //         : null,
-    //       sub_total: transaction.SubTotal,
-    //       total_tax: transaction.TotalTax,
-    //       total_amount: transaction.Total,
-    //     })),
-    //     { updateOnDuplicate: ["entity_id", "transaction_id"], transaction: t }
-    //   )
-    // ]);
-
+    
     for (const item of assets) {
       await db.Assets.upsert(
         {
@@ -351,22 +247,20 @@ app.get("/callback", async (req, res) => {
     );
 
     const idToken = response.data.id_token;
-    ACCESS_TOKEN = response.data.access_token;
-    REFRESH_TOKEN = response.data.refresh_token;
+    // ACCESS_TOKEN = response.data.access_token;
+    // REFRESH_TOKEN = response.data.refresh_token;
 
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
-    const [headerAccess, payloadAccess, signatureAccess] =
-      ACCESS_TOKEN.split(".");
+    // const [headerAccess, payloadAccess, signatureAccess] =
+    // response.data.access_token.split(".");
     // Base64 decode the payload
     const decodedPayload = atob(payloadID);
-    const decodedPayloadAccess = atob(payloadAccess);
+    // const decodedPayloadAccess = atob(payloadAccess);
     // Parse the decoded payload as JSON
     const payloadData = JSON.parse(decodedPayload);
-    const payloadAccessData = JSON.parse(decodedPayloadAccess);
+    // const payloadAccessData = JSON.parse(decodedPayloadAccess);
 
-    console.log("payload: ", payloadData);
-    console.log("payloadAccess: ", payloadAccessData);
 
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
@@ -377,9 +271,9 @@ app.get("/callback", async (req, res) => {
     // await db.createDB();
     await getConnection();
 
-    console.log("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
-    console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
-    console.log("ENTITY ID:", ENTITY_ID);
+    console.log("ACCESS TOKE AT FIRST: ", user.access_token);
+    console.log("REFRESH TOKE AT FIRST:  ", user.refresh_token);
+    console.log("ENTITY ID:", user.entity_id);
     console.log("Complete");
     res.redirect("/");
     // redirectURL('/')
@@ -394,7 +288,7 @@ const getConnection = async (req, res) => {
     const response = await axios.get("https://api.xero.com/connections", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + ACCESS_TOKEN,
+        Authorization: "Bearer " + user.access_token,
       },
     });
 
@@ -404,8 +298,8 @@ const getConnection = async (req, res) => {
         {
           customer_id: user.customer_id,
           name: user.customer_name,
-          access_token: ACCESS_TOKEN,
-          refresh_token: REFRESH_TOKEN,
+          access_token: user.access_token,
+          refresh_token: user.refresh_token,
         },
         {
           transaction: t,
@@ -443,7 +337,7 @@ const getConnection = async (req, res) => {
     }
 
     //Choose Demo Company data for populating
-    ENTITY_ID = response.data[0].tenantId;
+    user.entity_id = response.data[0].tenantId;
     console.log("response: ", response.data);
     // res.send("success");
   } catch (error) {
@@ -465,7 +359,7 @@ app.get("/getRefreshToken", async (req, res) => {
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: REFRESH_TOKEN,
+        refresh_token: user.refresh_token,
       },
       {
         headers: {
@@ -475,17 +369,15 @@ app.get("/getRefreshToken", async (req, res) => {
       }
     );
 
-    // await db.Customer.upsert({
-    //   customer_id: currUser.customer_id,
-    //   name: currUser.customer_name,
-    //   access_token: response.data.access_token,
-    //   refresh_token: response.data.refresh_token,
-    // });
+    await db.Customer.upsert({
+      customer_id: user.customer_id,
+      name: user.customer_name,
+      access_token: response.data.access_token,
+      refresh_token: response.data.refresh_token,
+    });
     
-    ACCESS_TOKEN = response.data.access_token; 
-    REFRESH_TOKEN = response.data.refresh_token;
-    console.log("ACCESS TOKEN after refresh: ", ACCESS_TOKEN);
-    console.log("REFRESH TOKEN after refresh:  ", REFRESH_TOKEN);
+    
+    
     res.json(response.data);
   } catch (error) {
     console.log(error);
