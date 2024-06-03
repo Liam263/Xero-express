@@ -51,7 +51,6 @@ function parseXeroTimestamp(xeroTimestamp) {
 }
 app.get("/getData", async (req, res) => {
   try {
-   
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
@@ -78,7 +77,7 @@ app.get("/getData", async (req, res) => {
     const assets = assetsResponse.data.items;
     const accounts = accountsResponse.data.Accounts;
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
-    
+
     const t = await sequelize.transaction();
 
     // await Promise.all([
@@ -187,105 +186,116 @@ app.get("/getData", async (req, res) => {
     // ]);
 
     for (const item of assets) {
-      await db.Assets.upsert({
-        entity_id: ENTITY_ID,
-        asset_id: item.assetId,
-        name: item.assetName,
-        asset_number: item.assetNumber,
-        purchase_date: item.purchaseDate,
-        purchase_price: item.purchasePrice,
-        disposal_price: item.disposalPrice,
-        asset_status: item.assetStatus,
-        depreciation_calculation_method: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.depreciationCalculationMethod
-          : null,
-        depreciation_method: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.depreciationMethod
-          : null,
-        average_method: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.averagingMethod
-          : null,
-        depreciation_rate: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.depreciationRate
-          : null,
-        effective_life_years: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.effectiveLifeYears
-          : null,
-        current_capital_gain: item.bookDepreciationDetail
-          ? item.bookDepreciationDetail.currentCapitalGain
-          : null,
-        current_capital_lost: item.bookDepreciationDetail
-          ? item.bookDepreciationDetail.currentCapitalLoss
-          : null,
-        depreciation_start_date: item.bookDepreciationDetail
-          ? item.bookDepreciationDetail.depreciationStartDate
-          : null,
-        cost_limits: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.costLimit
-          : null,
-        asset_residual_value: item.bookDepreciationSetting
-          ? item.bookDepreciationSetting.residualValue
-          : null,
-        prior_accum_depreciation_amount: item.bookDepreciationDetail
-          ? item.bookDepreciationDetail.priorAccumDepreciationAmount
-          : null,
-        current_accum_depreciation_amount: item.bookDepreciationDetail
-          ? item.bookDepreciationDetail.currentAccumDepreciationAmount
-          : null,
-      }, { transaction: t});
+      await db.Assets.upsert(
+        {
+          entity_id: ENTITY_ID,
+          asset_id: item.assetId,
+          name: item.assetName,
+          asset_number: item.assetNumber,
+          purchase_date: item.purchaseDate,
+          purchase_price: item.purchasePrice,
+          disposal_price: item.disposalPrice,
+          asset_status: item.assetStatus,
+          depreciation_calculation_method: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.depreciationCalculationMethod
+            : null,
+          depreciation_method: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.depreciationMethod
+            : null,
+          average_method: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.averagingMethod
+            : null,
+          depreciation_rate: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.depreciationRate
+            : null,
+          effective_life_years: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.effectiveLifeYears
+            : null,
+          current_capital_gain: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.currentCapitalGain
+            : null,
+          current_capital_lost: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.currentCapitalLoss
+            : null,
+          depreciation_start_date: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.depreciationStartDate
+            : null,
+          cost_limits: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.costLimit
+            : null,
+          asset_residual_value: item.bookDepreciationSetting
+            ? item.bookDepreciationSetting.residualValue
+            : null,
+          prior_accum_depreciation_amount: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.priorAccumDepreciationAmount
+            : null,
+          current_accum_depreciation_amount: item.bookDepreciationDetail
+            ? item.bookDepreciationDetail.currentAccumDepreciationAmount
+            : null,
+        },
+        { transaction: t }
+      );
     }
 
     for (const account of accounts) {
-      await db.ChartOfAccounts.upsert({
-        account_id: account.AccountID,
-        entity_id: ENTITY_ID,
-        account_type: account.Type,
-        account_name: account.Name,
-        account_code: account.Code,
-        account_description: account.Description ? account.Description : null,
-        tax_type: account.TaxType,
-        account_status: account.Status,
-      }, {transaction: t});
+      await db.ChartOfAccounts.upsert(
+        {
+          account_id: account.AccountID,
+          entity_id: ENTITY_ID,
+          account_type: account.Type,
+          account_name: account.Name,
+          account_code: account.Code,
+          account_description: account.Description ? account.Description : null,
+          tax_type: account.TaxType,
+          account_status: account.Status,
+        },
+        { transaction: t }
+      );
     }
 
     for (const transaction of bankTransactions) {
-      await db.BankTransactions.upsert({
-        entity_id: ENTITY_ID,
-        transaction_id: transaction.BankTransactionID,
-        transaction_status: transaction.Status,
-        contact_id: transaction.Contact ? transaction.Contact.ContactID : null,
-        contact_name: transaction.Contact ? transaction.Contact.Name : null,
-        transaction_date: parseXeroTimestamp(transaction.Date),
-        bank_account_id: transaction.BankAccount
-          ? transaction.BankAccount.AccountID
-          : null,
-        account_code: transaction.BankAccount
-          ? transaction.BankAccount.Code
-          : null,
-        bank_account_name: transaction.BankAccount
-          ? transaction.BankAccount.Name
-          : null,
-        transaction_currency: transaction.CurrencyCode,
-        currency_rate: transaction.CurrencyRate
-          ? transaction.CurrencyRate
-          : null,
-        transaction_type: transaction.Type,
-        item_ID: transaction.LineItems
-          ? transaction.LineItems.LineItemID
-          : null,
-        item_description: transaction.LineItems
-          ? transaction.LineItems.Description
-          : null,
-        item_quantity: transaction.LineItems
-          ? transaction.LineItems.Quantity
-          : null,
-        item_unit_price: transaction.LineItems
-          ? transaction.LineItems.UnitAmount
-          : null,
-        sub_total: transaction.SubTotal,
-        total_tax: transaction.TotalTax,
-        total_amount: transaction.Total,
-      },{transaction: t});
+      await db.BankTransactions.upsert(
+        {
+          entity_id: ENTITY_ID,
+          transaction_id: transaction.BankTransactionID,
+          transaction_status: transaction.Status,
+          contact_id: transaction.Contact
+            ? transaction.Contact.ContactID
+            : null,
+          contact_name: transaction.Contact ? transaction.Contact.Name : null,
+          transaction_date: parseXeroTimestamp(transaction.Date),
+          bank_account_id: transaction.BankAccount
+            ? transaction.BankAccount.AccountID
+            : null,
+          account_code: transaction.BankAccount
+            ? transaction.BankAccount.Code
+            : null,
+          bank_account_name: transaction.BankAccount
+            ? transaction.BankAccount.Name
+            : null,
+          transaction_currency: transaction.CurrencyCode,
+          currency_rate: transaction.CurrencyRate
+            ? transaction.CurrencyRate
+            : null,
+          transaction_type: transaction.Type,
+          item_ID: transaction.LineItems
+            ? transaction.LineItems.LineItemID
+            : null,
+          item_description: transaction.LineItems
+            ? transaction.LineItems.Description
+            : null,
+          item_quantity: transaction.LineItems
+            ? transaction.LineItems.Quantity
+            : null,
+          item_unit_price: transaction.LineItems
+            ? transaction.LineItems.UnitAmount
+            : null,
+          sub_total: transaction.SubTotal,
+          total_tax: transaction.TotalTax,
+          total_amount: transaction.Total,
+        },
+        { transaction: t }
+      );
     }
 
     await t.commit();
@@ -343,7 +353,7 @@ app.get("/callback", async (req, res) => {
     const idToken = response.data.id_token;
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    
+
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
     const [headerAccess, payloadAccess, signatureAccess] =
@@ -363,15 +373,14 @@ app.get("/callback", async (req, res) => {
 
     console.log("Create DB: ");
 
-
     // await db.createDB();
     await getConnection();
 
     console.log("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
     console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
-    console.log("ENTITY ID:", ENTITY_ID)
+    console.log("ENTITY ID:", ENTITY_ID);
     console.log("Complete");
-    res.redirect('/');
+    res.redirect("/");
     // redirectURL('/')
   } catch (error) {
     res.status(500).json({ error: error.response });
@@ -387,7 +396,7 @@ const getConnection = async (req, res) => {
         Authorization: "Bearer " + ACCESS_TOKEN,
       },
     });
-   
+
     const t = await sequelize.transaction();
     try {
       await db.Customer.upsert(
@@ -395,7 +404,7 @@ const getConnection = async (req, res) => {
           customer_id: user.customer_id,
           name: user.customer_name,
           access_token: ACCESS_TOKEN,
-          refresh_token: REFRESH_TOKEN
+          refresh_token: REFRESH_TOKEN,
         },
         {
           transaction: t,
@@ -415,11 +424,14 @@ const getConnection = async (req, res) => {
         );
 
         for (account of accountTypes) {
-          await db.AccountTypes.upsert({
+          await db.AccountTypes.upsert(
+            {
               account_type: account.code,
               entity_id: tenant.tenantId,
               account_class_type: null, // change this later
-          }, {transaction: t});
+            },
+            { transaction: t }
+          );
         }
       }
 
@@ -440,11 +452,14 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
+    const user = await db.Customer.findOne({
+      where: { customer_id: user.customer_id },
+    });
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: REFRESH_TOKEN,
+        refresh_token: user.refresh_token,
       },
       {
         headers: {
@@ -454,8 +469,14 @@ app.get("/getRefreshToken", async (req, res) => {
       }
     );
 
-    ACCESS_TOKEN = response.data.access_token;
-    REFRESH_TOKEN = response.data.refresh_token;
+    await db.Customer.upsert({
+      customer_id: user.customer_id,
+      name: user.customer_name,
+      access_token: response.data.access_token,
+      refresh_token: response.data.refresh_token,
+    });
+    
+
     console.log("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
     console.log("REFRESH TOKE after refresh:  ", REFRESH_TOKEN);
     res.json(response.data);
@@ -463,7 +484,6 @@ app.get("/getRefreshToken", async (req, res) => {
     console.log(error);
   }
 });
-
 
 // db.create().then(() => {
 //   app.listen(PORT, () => {
