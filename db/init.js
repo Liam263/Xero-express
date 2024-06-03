@@ -104,7 +104,7 @@ const AccountTypes = sequelize.define('Account_Types', {
   account_type: {
     type: DataTypes.STRING(50),
     allowNull: true,
-    primaryKey: true
+    primaryKey: true,
   },
   account_class_type: {
     type: DataTypes.STRING(50),
@@ -220,10 +220,10 @@ const ChartOfAccounts = sequelize.define('Chart_of_accounts', {
   account_type: {
     type: DataTypes.STRING(50),
     allowNull: true,
-    references: {
-      model: AccountTypes,
-      key: 'account_type'
-    }
+    // references: {
+    //   model: AccountTypes,
+    //   key: 'account_type'
+    // }
   },
   account_name: {
     type: DataTypes.STRING(255),
@@ -231,7 +231,7 @@ const ChartOfAccounts = sequelize.define('Chart_of_accounts', {
   },
   account_code: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: true,
   },
   account_description: {
     type: DataTypes.TEXT,
@@ -285,10 +285,10 @@ const BankTransactions = sequelize.define('Bank_Transactions', {
   account_code: {
     type: DataTypes.STRING(50),
     allowNull: false,
-    references: {
-      model: ChartOfAccounts,
-      key: 'account_code'
-    }
+    // references: {
+    //   model: ChartOfAccounts,
+    //   key: 'account_code'
+    // }
   },
   bank_account_name: {
     type: DataTypes.STRING(255),

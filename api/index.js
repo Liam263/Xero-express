@@ -275,8 +275,8 @@ app.get("/callback", async (req, res) => {
     console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
     console.log("ENTITY ID:", ENTITY_ID);
     console.log("Complete");
-    // res.redirect("/");
-    res.json(response.data)
+    res.redirect("/");
+    // res.json(response.data)
     // redirectURL('/')
   } catch (error) {
     res.status(500).json({ error: error.response });
