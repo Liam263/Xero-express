@@ -453,19 +453,19 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    const currUser = await db.Customer.findOne({
-      where: { customer_id: user.customer_id },
-    });
+    // const currUser = await db.Customer.findOne({
+    //   where: { customer_id: user.customer_id },
+    // });
 
-    console.log("user: ", currUser);
-    if (!currUser) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
+    // console.log("user: ", currUser);
+    // if (!currUser) {
+    //   return res.status(404).json({ error: "Customer not found" });
+    // }
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: currUser.refresh_token,
+        refresh_token: REFRESH_TOKEN,
       },
       {
         headers: {
@@ -475,16 +475,17 @@ app.get("/getRefreshToken", async (req, res) => {
       }
     );
 
-    await db.Customer.upsert({
-      customer_id: currUser.customer_id,
-      name: currUser.customer_name,
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    });
+    // await db.Customer.upsert({
+    //   customer_id: currUser.customer_id,
+    //   name: currUser.customer_name,
+    //   access_token: response.data.access_token,
+    //   refresh_token: response.data.refresh_token,
+    // });
     
-
-    console.log("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
-    console.log("REFRESH TOKE after refresh:  ", REFRESH_TOKEN);
+    ACCESS_TOKEN = response.data.access_token; 
+    REFRESH_TOKEN = response.data.refresh_token;
+    console.log("ACCESS TOKEN after refresh: ", ACCESS_TOKEN);
+    console.log("REFRESH TOKEN after refresh:  ", REFRESH_TOKEN);
     res.json(response.data);
   } catch (error) {
     console.log(error);
