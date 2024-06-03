@@ -51,6 +51,7 @@ function parseXeroTimestamp(xeroTimestamp) {
 }
 app.get("/getData", async (req, res) => {
   try {
+
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
@@ -195,6 +196,7 @@ app.get("/getData", async (req, res) => {
     }
 
     await t.commit();
+    console.log("User in getData: ", user)
     res.json(bankTransactions);
   } catch (error) {
     console.log(error);
@@ -377,7 +379,7 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     
     
-    
+    console.log("user: ",user)
     res.json(response.data);
   } catch (error) {
     console.log(error);
