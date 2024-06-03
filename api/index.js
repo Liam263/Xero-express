@@ -453,7 +453,7 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-
+    console.log("user:", user)
     const currUser = await db.Customer.findOne({
       where: { customer_id: user.customer_id },
     });
