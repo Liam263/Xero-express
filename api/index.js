@@ -85,7 +85,7 @@ app.get("/getData", async (req, res) => {
     for (const item of assets) {
       await db.Assets.upsert(
         {
-          entity_id: ENTITY_ID,
+          entity_id: user.entity_id,
           asset_id: item.assetId,
           name: item.assetName,
           asset_number: item.assetNumber,
@@ -138,7 +138,7 @@ app.get("/getData", async (req, res) => {
       await db.ChartOfAccounts.upsert(
         {
           account_id: account.AccountID,
-          entity_id: ENTITY_ID,
+          entity_id: user.entity_id,
           account_type: account.Type,
           account_name: account.Name,
           account_code: account.Code,
@@ -153,7 +153,7 @@ app.get("/getData", async (req, res) => {
     for (const transaction of bankTransactions) {
       await db.BankTransactions.upsert(
         {
-          entity_id: ENTITY_ID,
+          entity_id: user.entity_id,
           transaction_id: transaction.BankTransactionID,
           transaction_status: transaction.Status,
           contact_id: transaction.Contact
