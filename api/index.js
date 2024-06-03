@@ -3,7 +3,6 @@ const axios = require("axios");
 const bodyParser = require("body-parser");
 const db = require("../db/init");
 const { Sequelize } = require("sequelize");
-const cron = require("node-cron");
 require("dotenv").config();
 
 const sequelize = new Sequelize(
@@ -274,7 +273,7 @@ app.get("/callback", async (req, res) => {
 
     console.log("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
     console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
-    console.log("ENTITY ID:", user.entity_id);
+    console.log("ENTITY ID:", ENTITY_ID);
     console.log("Complete");
     // res.redirect("/");
     res.json(response.data)

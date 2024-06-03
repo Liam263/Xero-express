@@ -7,19 +7,9 @@
         "api/index.js": {
           "maxDuration": 60
         }
-      },
+      }
     
 
-    "crons": [
-        {
-          "path": "/getData",
-          "schedule": "15 15 * * *"
-        },
-        {
-          "path" : "/getRefreshToken",
-          "schedule": "0 15 * * *"
-        }
-      ]
 
    
    }

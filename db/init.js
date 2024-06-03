@@ -99,7 +99,7 @@ const AccountTypes = sequelize.define('Account_Types', {
   entity_id: {
     type: DataTypes.UUID,
     allowNull: false, 
-
+    primaryKey: true
   },
   account_type: {
     type: DataTypes.STRING(50),
@@ -231,8 +231,7 @@ const ChartOfAccounts = sequelize.define('Chart_of_accounts', {
   },
   account_code: {
     type: DataTypes.STRING(255),
-    allowNull: true,
-    unique: true
+    allowNull: true
   },
   account_description: {
     type: DataTypes.TEXT,
