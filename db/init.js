@@ -20,6 +20,12 @@ const Customer = sequelize.define('Customer', {
   name: {
     type: DataTypes.STRING(255),
     allowNull: false
+  }, 
+  access_token: {
+    type: DataTypes.STRING(500),
+  },
+  refresh_token: {
+    type: DataTypes.STRING(500)
   }
 });
 

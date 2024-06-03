@@ -394,6 +394,8 @@ const getConnection = async (req, res) => {
         {
           customer_id: user.customer_id,
           name: user.customer_name,
+          access_token: ACCESS_TOKEN,
+          refresh_token: REFRESH_TOKEN
         },
         {
           transaction: t,
