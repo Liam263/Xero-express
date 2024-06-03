@@ -370,7 +370,8 @@ app.get("/callback", async (req, res) => {
 
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
-
+    user.access_token = response.data.access_token;
+    user.refresh_token = response.data.refresh_token;
     console.log("Create DB: ");
 
     // await db.createDB();
@@ -452,9 +453,14 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
+
     const user = await db.Customer.findOne({
       where: { customer_id: user.customer_id },
     });
+    console.log("user: ", user);
+    if (!user) {
+      return res.status(404).json({ error: "Customer not found" });
+    }
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
