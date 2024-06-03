@@ -453,10 +453,11 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    console.log("user:", user)
+    console.log("user:", user);
     const currUser = await db.Customer.findOne({
       where: { customer_id: user.customer_id },
     });
+
     console.log("user: ", currUser);
     if (!currUser) {
       return res.status(404).json({ error: "Customer not found" });
@@ -475,12 +476,12 @@ app.get("/getRefreshToken", async (req, res) => {
       }
     );
 
-    await db.Customer.upsert({
-      customer_id: currUser.customer_id,
-      name: currUser.customer_name,
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    });
+    // await db.Customer.upsert({
+    //   customer_id: currUser.customer_id,
+    //   name: currUser.customer_name,
+    //   access_token: response.data.access_token,
+    //   refresh_token: response.data.refresh_token,
+    // });
     
 
     console.log("ACCESS TOKE after refresh: ", ACCESS_TOKEN);
