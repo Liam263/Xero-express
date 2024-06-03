@@ -249,8 +249,7 @@ app.get("/callback", async (req, res) => {
     );
 
     const idToken = response.data.id_token;
-    // ACCESS_TOKEN = response.data.access_token;
-    // REFRESH_TOKEN = response.data.refresh_token;
+    
 
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
@@ -277,7 +276,8 @@ app.get("/callback", async (req, res) => {
     console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
     console.log("ENTITY ID:", user.entity_id);
     console.log("Complete");
-    res.redirect("/");
+    // res.redirect("/");
+    res.json(response.data)
     // redirectURL('/')
   } catch (error) {
     res.status(500).json({ error: error.response });
@@ -338,7 +338,7 @@ const getConnection = async (req, res) => {
     }
 
     //Choose Demo Company data for populating
-    user.entity_id = response.data[0].tenantId;
+    ENTITY_ID = response.data[0].tenantId;
     console.log("response: ", response.data);
     // res.send("success");
   } catch (error) {
@@ -348,14 +348,7 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    // const currUser = await db.Customer.findOne({
-    //   where: { customer_id: user.customer_id },
-    // });
-
-    // console.log("user: ", currUser);
-    // if (!currUser) {
-    //   return res.status(404).json({ error: "Customer not found" });
-    // }
+    console.log("REFRESH TOKEN before: ", REFRESH_TOKEN)
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
@@ -376,10 +369,13 @@ app.get("/getRefreshToken", async (req, res) => {
       refresh_token: response.data.refresh_token,
     });
     ACCESS_TOKEN = response.data.access_token;
-    
+    REFRESH_TOKEN = response.data.refresh_token;
+    console.log("Refresh token after: " , REFRESH_TOKEN)
+    console.log("Access token after: " , ACCESS_TOKEN)
+
     res.json(response.data);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 });
 
