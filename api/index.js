@@ -454,18 +454,18 @@ const getConnection = async (req, res) => {
 app.get("/getRefreshToken", async (req, res) => {
   try {
 
-    const user = await db.Customer.findOne({
+    const currUser = await db.Customer.findOne({
       where: { customer_id: user.customer_id },
     });
-    console.log("user: ", user);
-    if (!user) {
+    console.log("user: ", currUser);
+    if (!currUser) {
       return res.status(404).json({ error: "Customer not found" });
     }
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: user.refresh_token,
+        refresh_token: currUser.refresh_token,
       },
       {
         headers: {
@@ -476,8 +476,8 @@ app.get("/getRefreshToken", async (req, res) => {
     );
 
     await db.Customer.upsert({
-      customer_id: user.customer_id,
-      name: user.customer_name,
+      customer_id: currUser.customer_id,
+      name: currUser.customer_name,
       access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
     });
