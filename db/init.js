@@ -22,11 +22,8 @@ const Customer = sequelize.define('Customer', {
     type: DataTypes.STRING(255),
     allowNull: false
   }, 
-  access_token: {
-    type: DataTypes.TEXT,
-  },
   refresh_token: {
-    type: DataTypes.TEXT
+    type: DataTypes.STRING(255)
   }
 });
 

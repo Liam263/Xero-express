@@ -56,21 +56,21 @@ app.get("/getData", async (req, res) => {
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
           headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            "Xero-Tenant-Id": user.tenant_id,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Xero-Tenant-Id": ENTITY_ID,
           },
           params: { status: "DRAFT", pageSize: 100 }, //could be Draft | Registered | Disposed
         }),
         axios.get(`https://api.xero.com/api.xro/2.0/Accounts`, {
           headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            "Xero-Tenant-Id": user.tenant_id,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Xero-Tenant-Id": ENTITY_ID,
           },
         }),
         axios.get(`https://api.xero.com/api.xro/2.0/BankTransactions`, {
           headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            "Xero-Tenant-Id": user.tenant_id,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Xero-Tenant-Id": ENTITY_ID,
           },
         }),
       ]);
@@ -85,7 +85,7 @@ app.get("/getData", async (req, res) => {
     for (const item of assets) {
       await db.Assets.upsert(
         {
-          entity_id: user.entity_id,
+          entity_id: ENTITY_ID,
           asset_id: item.assetId,
           name: item.assetName,
           asset_number: item.assetNumber,
@@ -138,7 +138,7 @@ app.get("/getData", async (req, res) => {
       await db.ChartOfAccounts.upsert(
         {
           account_id: account.AccountID,
-          entity_id: user.entity_id,
+          entity_id: ENTITY_ID,
           account_type: account.Type,
           account_name: account.Name,
           account_code: account.Code,
@@ -153,7 +153,7 @@ app.get("/getData", async (req, res) => {
     for (const transaction of bankTransactions) {
       await db.BankTransactions.upsert(
         {
-          entity_id: user.entity_id,
+          entity_id: ENTITY_ID,
           transaction_id: transaction.BankTransactionID,
           transaction_status: transaction.Status,
           contact_id: transaction.Contact
@@ -266,15 +266,15 @@ app.get("/callback", async (req, res) => {
 
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
-    user.access_token = response.data.access_token;
-    user.refresh_token = response.data.refresh_token;
+    ACCESS_TOKEN = response.data.access_token;
+    REFRESH_TOKEN = response.data.refresh_token;
     console.log("Create DB: ");
 
     // await db.createDB();
     await getConnection();
 
-    console.log("ACCESS TOKE AT FIRST: ", user.access_token);
-    console.log("REFRESH TOKE AT FIRST:  ", user.refresh_token);
+    console.log("ACCESS TOKE AT FIRST: ", ACCESS_TOKEN);
+    console.log("REFRESH TOKE AT FIRST:  ", REFRESH_TOKEN);
     console.log("ENTITY ID:", user.entity_id);
     console.log("Complete");
     res.redirect("/");
@@ -290,7 +290,7 @@ const getConnection = async (req, res) => {
     const response = await axios.get("https://api.xero.com/connections", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + user.access_token,
+        Authorization: "Bearer " + ACCESS_TOKEN,
       },
     });
 
@@ -300,8 +300,7 @@ const getConnection = async (req, res) => {
         {
           customer_id: user.customer_id,
           name: user.customer_name,
-          access_token: user.access_token,
-          refresh_token: user.refresh_token,
+          refresh_token: REFRESH_TOKEN,
         },
         {
           transaction: t,
@@ -361,7 +360,7 @@ app.get("/getRefreshToken", async (req, res) => {
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: user.refresh_token,
+        refresh_token: REFRESH_TOKEN,
       },
       {
         headers: {
@@ -374,12 +373,10 @@ app.get("/getRefreshToken", async (req, res) => {
     await db.Customer.upsert({
       customer_id: user.customer_id,
       name: user.customer_name,
-      access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
     });
+    ACCESS_TOKEN = response.data.access_token;
     
-    
-    console.log("user: ",user)
     res.json(response.data);
   } catch (error) {
     console.log(error);
@@ -401,7 +398,7 @@ app.get("/getRefreshToken", async (req, res) => {
 
 //   })
 // });
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-//   });
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 module.exports = app;
