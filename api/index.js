@@ -50,7 +50,6 @@ function parseXeroTimestamp(xeroTimestamp) {
 }
 app.get("/getData", async (req, res) => {
   try {
-
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
@@ -80,7 +79,6 @@ app.get("/getData", async (req, res) => {
 
     const t = await sequelize.transaction();
 
-    
     for (const item of assets) {
       await db.Assets.upsert(
         {
@@ -195,7 +193,9 @@ app.get("/getData", async (req, res) => {
     }
 
     await t.commit();
-    console.log("User in getData: ", user)
+    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    console.log("ENTITY ID :", ENTITY_ID);
     res.json(bankTransactions);
   } catch (error) {
     console.log(error);
@@ -204,6 +204,10 @@ app.get("/getData", async (req, res) => {
 });
 
 app.get("/hello", async (req, res) => {
+  console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+  console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+  console.log("ENTITY ID :", ENTITY_ID);
+
   res.send("hello");
 });
 app.get("/drop", async (req, res) => {
@@ -248,7 +252,6 @@ app.get("/callback", async (req, res) => {
     );
 
     const idToken = response.data.id_token;
-    
 
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
@@ -260,7 +263,6 @@ app.get("/callback", async (req, res) => {
     // Parse the decoded payload as JSON
     const payloadData = JSON.parse(decodedPayload);
     // const payloadAccessData = JSON.parse(decodedPayloadAccess);
-
 
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
@@ -347,7 +349,7 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    console.log("REFRESH TOKEN before: ", REFRESH_TOKEN)
+    console.log("REFRESH TOKEN before: ", REFRESH_TOKEN);
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
@@ -369,12 +371,12 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    console.log("Refresh token after: " , REFRESH_TOKEN)
-    console.log("Access token after: " , ACCESS_TOKEN)
+    console.log("Refresh token after: ", REFRESH_TOKEN);
+    console.log("Access token after: ", ACCESS_TOKEN);
 
     res.json(response.data);
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 });
 
@@ -394,6 +396,6 @@ app.get("/getRefreshToken", async (req, res) => {
 //   })
 // });
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+  console.log(`Server is running on port ${PORT}`);
+});
 module.exports = app;
