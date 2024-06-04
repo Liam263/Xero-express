@@ -355,7 +355,7 @@ app.get("/getRefreshToken", async (req, res) => {
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: REFRESH_TOKEN,
+        refresh_token: currentUser.refresh_token,
       },
       {
         headers: {
