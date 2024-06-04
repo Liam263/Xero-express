@@ -349,6 +349,7 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
+    const currentUser = await db.Customer.findByPk(user.customer_id)
     console.log("REFRESH TOKEN before: ", REFRESH_TOKEN);
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
@@ -371,11 +372,13 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
+    console.error("Current user",currentUser)
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
 
     res.json(response.data);
   } catch (error) {
+    console.error("Current user",currentUser)
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
     console.log(error);
