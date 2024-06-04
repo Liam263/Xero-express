@@ -198,8 +198,11 @@ app.get("/getData", async (req, res) => {
     console.log("ENTITY ID :", ENTITY_ID);
     res.json(bankTransactions);
   } catch (error) {
+    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    console.log("ENTITY ID :", ENTITY_ID);
     console.log(error);
-    // await t.rollback();
+    await t.rollback();
   }
 });
 
@@ -255,14 +258,11 @@ app.get("/callback", async (req, res) => {
 
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
-    // const [headerAccess, payloadAccess, signatureAccess] =
-    // response.data.access_token.split(".");
+    
     // Base64 decode the payload
     const decodedPayload = atob(payloadID);
-    // const decodedPayloadAccess = atob(payloadAccess);
     // Parse the decoded payload as JSON
     const payloadData = JSON.parse(decodedPayload);
-    // const payloadAccessData = JSON.parse(decodedPayloadAccess);
 
     user.customer_id = payloadData.xero_userid;
     user.customer_name = payloadData.name;
@@ -376,25 +376,17 @@ app.get("/getRefreshToken", async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
+    console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
+    console.log("Access token in ERROR: ", ACCESS_TOKEN);
     console.log(error);
   }
 });
 
-// db.create().then(() => {
-//   app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-//   });
-// });
+
 
 // db.dropDB();
 // db.createDB()
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-//   cron.schedule('*/30 * * * * *', () => {
-//     console.log('Cron job is running...');
 
-//   })
-// });
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
