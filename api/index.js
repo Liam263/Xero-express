@@ -372,13 +372,13 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    console.error("Current user",currentUser)
+    console.log("Current user Refresh Token: ",currentUser.refresh_token)
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
 
     res.json(response.data);
   } catch (error) {
-    console.error("Current user",currentUser)
+    console.log("Current user",currentUser)
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
     console.log(error);
