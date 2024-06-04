@@ -202,7 +202,7 @@ app.get("/getData", async (req, res) => {
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
     console.log(error);
-    await t.rollback();
+    // await t.rollback();
   }
 });
 
