@@ -12,8 +12,8 @@ const sequelize = new Sequelize(
 const app = express();
 const PORT = 3000;
 var ACCESS_TOKEN, REFRESH_TOKEN, ENTITY_ID;
-const clientID = "77AD125B449D41429D6C6FB281770221";
-const clientSecret = "7xSgCmgr8dKtrk88Lz58fsyppPl3eto0ojgPhuzOmR6_EsFB";
+const clientID = "7D3D642AB4AF400B9119AE2D04BAFEAC";
+const clientSecret = "MMxNGeiM0iW5fmQ_j9jXLSL1MGzhAgXVRFTqZ9sGcM92W8Wf";
 const redirectURL = "https://xero-express.vercel.app/callback";
 var user = {};
 const accountTypes = [
