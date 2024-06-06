@@ -371,8 +371,8 @@ app.get("/getRefreshToken", async (req, res) => {
     );
 
     await db.Customer.upsert({
-      customer_id: user.customer_id,
-      name: user.customer_name,
+      customer_id: Users[Users.length-1].dataValues.customer_id,
+      name: Users[Users.length-1].dataValues.customer_name,
       access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
     });
