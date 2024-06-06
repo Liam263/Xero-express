@@ -48,8 +48,7 @@ function parseXeroTimestamp(xeroTimestamp) {
 
   return new Date(timestamp);
 }
-
-const getData = async ()=> {
+app.get("/getData", async (req, res) => {
   try {
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
@@ -205,12 +204,6 @@ const getData = async ()=> {
     console.log(error);
     // await t.rollback();
   }
-}
-app.get("/getData", async (req, res) => {
-  getData().then( ()=>{
-    console.log("success");
-  }).catch(error => {console.log(error);});
-  return res.send(200)
 });
 
 app.get("/hello", async (req, res) => {
@@ -303,6 +296,7 @@ const getConnection = async (req, res) => {
     });
 
     const t = await sequelize.transaction();
+    try {
       await db.Customer.upsert(
         {
           customer_id: user.customer_id,
@@ -340,22 +334,25 @@ const getConnection = async (req, res) => {
       }
 
       await t.commit();
-    
+    } catch (error) {
+      console.error(error);
+      await t.rollback();
+    }
 
     //Choose Demo Company data for populating
     ENTITY_ID = response.data[0].tenantId;
     console.log("response: ", response.data);
     // res.send("success");
   } catch (error) {
-    console.log("ERROR: ", error);
-    await t.rollback(); 
+    console.log(error.message);
   }
 };
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    const users = await db.Customer.findAll()
-    console.log("users : ", users);
+    console.log('user: ', user)
+    const currentUser = await db.Customer.findByPk(user.customer_id)
+    console.log("REFRESH TOKEN before: ", currentUser.refresh_token);
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
@@ -373,6 +370,7 @@ app.get("/getRefreshToken", async (req, res) => {
     await db.Customer.upsert({
       customer_id: user.customer_id,
       name: user.customer_name,
+      access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
     });
     ACCESS_TOKEN = response.data.access_token;
@@ -383,7 +381,7 @@ app.get("/getRefreshToken", async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    // console.log("Current user",currentUser)
+    console.log("Current user",currentUser);
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
     console.log(error);
