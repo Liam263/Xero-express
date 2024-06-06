@@ -404,8 +404,14 @@ app.get("/getRefreshToken", async (req, res) => {
     // console.log("Access token after: ", ACCESS_TOKEN);
 
     // res.json(response.data);
-    
-    getRefreshToken().then(()=>{}).catch((err)=> {console.log("Error", err);});
+
+    getRefreshToken()
+      .then(() => {
+        console.log("GET REFRESH TOKEN")
+      })
+      .catch((err) => {
+        console.log("Error", err);
+      });
 
     res.send("success");
   } catch (error) {
