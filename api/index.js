@@ -410,7 +410,7 @@ app.get("/getRefreshToken", async (req, res) => {
   } catch (error) {
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
-    console.log(error);
+    console.log(error.data);
   }
 });
 
