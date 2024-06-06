@@ -404,29 +404,8 @@ app.get("/getRefreshToken", async (req, res) => {
     // console.log("Access token after: ", ACCESS_TOKEN);
 
     // res.json(response.data);
-    const Users = await db.Customer.findAll();
-    for (user of Users) {
-      const response = await axios.post(
-        "https://identity.xero.com/connect/token",
-        {
-          grant_type: "refresh_token",
-          refresh_token: user.dataValues.refresh_token,
-        },
-        {
-          headers: {
-            Authorization: "Basic " + btoa(clientID + ":" + clientSecret),
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-
-      await db.Customer.upsert({
-        customer_id: user.customer_id,
-        name: user.customer_name,
-        access_token: response.data.access_token,
-        refresh_token: response.data.refresh_token,
-      });
-    }
+    
+    getRefreshToken().then(()=>{}).catch((err)=> {console.log("Error", err);});
 
     res.send("success");
   } catch (error) {
