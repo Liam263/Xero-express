@@ -348,31 +348,7 @@ const getConnection = async (req, res) => {
   }
 };
 
-const getRefreshToken = async () => {
-  const Users = await db.Customer.findAll();
-  for (user of Users) {
-    const response = await axios.post(
-      "https://identity.xero.com/connect/token",
-      {
-        grant_type: "refresh_token",
-        refresh_token: user.dataValues.refresh_token,
-      },
-      {
-        headers: {
-          Authorization: "Basic " + btoa(clientID + ":" + clientSecret),
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
 
-    await db.Customer.upsert({
-      customer_id: user.customer_id,
-      name: user.customer_name,
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    });
-  }
-};
 app.get("/getRefreshToken", async (req, res) => {
   try {
     // console.log('user: ', user)
@@ -404,7 +380,7 @@ app.get("/getRefreshToken", async (req, res) => {
     REFRESH_TOKEN = response.data.refresh_token;
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
-
+    console.log("ENTITY_ID : ", ENTITY_ID);
     res.json(response.data);
 
    
@@ -412,6 +388,7 @@ app.get("/getRefreshToken", async (req, res) => {
   } catch (error) {
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
+    console.log("ENTITY :", ENTITY_ID)
     console.log(error);
   }
 });
