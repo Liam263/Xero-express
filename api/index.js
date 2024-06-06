@@ -303,7 +303,6 @@ const getConnection = async (req, res) => {
     });
 
     const t = await sequelize.transaction();
-    try {
       await db.Customer.upsert(
         {
           customer_id: user.customer_id,
@@ -341,17 +340,15 @@ const getConnection = async (req, res) => {
       }
 
       await t.commit();
-    } catch (error) {
-      console.error(error);
-      await t.rollback();
-    }
+    
 
     //Choose Demo Company data for populating
     ENTITY_ID = response.data[0].tenantId;
     console.log("response: ", response.data);
     // res.send("success");
   } catch (error) {
-    console.log(error.message);
+    console.log("ERROR: ", error);
+    await t.rollback(); 
   }
 };
 
