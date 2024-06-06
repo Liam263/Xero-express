@@ -48,7 +48,8 @@ function parseXeroTimestamp(xeroTimestamp) {
 
   return new Date(timestamp);
 }
-app.get("/getData", async (req, res) => {
+
+const getData = async ()=> {
   try {
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
@@ -204,6 +205,12 @@ app.get("/getData", async (req, res) => {
     console.log(error);
     // await t.rollback();
   }
+}
+app.get("/getData", async (req, res) => {
+  getData().then( ()=>{
+    console.log("success");
+  }).catch(error => {console.log(error);});
+  return res.send(200)
 });
 
 app.get("/hello", async (req, res) => {
@@ -301,6 +308,7 @@ const getConnection = async (req, res) => {
         {
           customer_id: user.customer_id,
           name: user.customer_name,
+          access_token: ACCESS_TOKEN,
           refresh_token: REFRESH_TOKEN,
         },
         {
@@ -349,9 +357,8 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    console.log('user: ', user)
-    const currentUser = await db.Customer.findByPk(user.customer_id)
-    console.log("REFRESH TOKEN before: ", currentUser.refresh_token);
+    const users = await db.Customer.findAll()
+    console.log("users : ", users);
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {

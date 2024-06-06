@@ -22,6 +22,11 @@ const Customer = sequelize.define('Customer', {
     type: DataTypes.STRING(255),
     allowNull: false
   }, 
+  access_token: {
+    type: DataTypes.UUID,
+    defaultValue: UUIDV4
+  }
+  ,
   refresh_token: {
     type: DataTypes.STRING(255)
   }
