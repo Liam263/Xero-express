@@ -379,7 +379,7 @@ app.get("/getRefreshToken", async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    console.log("Current user",currentUser)
+    // console.log("Current user",currentUser)
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
     console.log(error);
