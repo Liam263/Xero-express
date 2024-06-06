@@ -376,6 +376,7 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
+    ENTITY_ID = ENTITY_ID; 
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
     console.log("ENTITY_ID : ", ENTITY_ID);
