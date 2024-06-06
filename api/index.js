@@ -354,35 +354,33 @@ app.get("/getRefreshToken", async (req, res) => {
     const Users = await db.Customer.findAll()
     console.log('users: ', Users)
     // console.log("REFRESH TOKEN before: ", currentUser.refresh_token);
-    const response = await axios.post(
-      "https://identity.xero.com/connect/token",
-      {
-        grant_type: "refresh_token",
-        refresh_token: currentUser.refresh_token,
-      },
-      {
-        headers: {
-          Authorization: "Basic " + btoa(clientID + ":" + clientSecret),
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
+    // const response = await axios.post(
+    //   "https://identity.xero.com/connect/token",
+    //   {
+    //     grant_type: "refresh_token",
+    //     refresh_token: currentUser.refresh_token,
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: "Basic " + btoa(clientID + ":" + clientSecret),
+    //       "Content-Type": "application/x-www-form-urlencoded",
+    //     },
+    //   }
+    // );
 
-    await db.Customer.upsert({
-      customer_id: user.customer_id,
-      name: user.customer_name,
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    });
-    ACCESS_TOKEN = response.data.access_token;
-    REFRESH_TOKEN = response.data.refresh_token;
-    console.log("Current user Refresh Token: ",currentUser.refresh_token)
-    console.log("Refresh token after: ", REFRESH_TOKEN);
-    console.log("Access token after: ", ACCESS_TOKEN);
+    // await db.Customer.upsert({
+    //   customer_id: user.customer_id,
+    //   name: user.customer_name,
+    //   access_token: response.data.access_token,
+    //   refresh_token: response.data.refresh_token,
+    // });
+    // ACCESS_TOKEN = response.data.access_token;
+    // REFRESH_TOKEN = response.data.refresh_token;
+    // console.log("Refresh token after: ", REFRESH_TOKEN);
+    // console.log("Access token after: ", ACCESS_TOKEN);
 
     res.json(response.data);
   } catch (error) {
-    console.log("Current user",currentUser);
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
     console.log(error);
