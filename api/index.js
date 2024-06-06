@@ -201,7 +201,7 @@ app.get("/getData", async (req, res) => {
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
-    console.log(error);
+    console.log(error.data);
     // await t.rollback();
   }
 });
