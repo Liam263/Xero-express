@@ -258,7 +258,7 @@ app.get("/callback", async (req, res) => {
 
     // Split the token into its parts
     const [header, payloadID, signature] = idToken.split(".");
-    
+
     // Base64 decode the payload
     const decodedPayload = atob(payloadID);
     // Parse the decoded payload as JSON
@@ -348,9 +348,9 @@ const getConnection = async (req, res) => {
   }
 };
 
-const getRefreshToken = async ()=> {
-  const Users = await db.Customer.findAll(); 
-  for (user of Users){
+const getRefreshToken = async () => {
+  const Users = await db.Customer.findAll();
+  for (user of Users) {
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
@@ -372,7 +372,7 @@ const getRefreshToken = async ()=> {
       refresh_token: response.data.refresh_token,
     });
   }
-}
+};
 app.get("/getRefreshToken", async (req, res) => {
   try {
     // console.log('user: ', user)
@@ -404,9 +404,30 @@ app.get("/getRefreshToken", async (req, res) => {
     // console.log("Access token after: ", ACCESS_TOKEN);
 
     // res.json(response.data);
-    getRefreshToken().then(()=>{
-      console.log("reached Refresh TOKEN FUNCTIONS")
-    }).catch((error)=> {console.log(error)});
+    const Users = await db.Customer.findAll();
+    for (user of Users) {
+      const response = await axios.post(
+        "https://identity.xero.com/connect/token",
+        {
+          grant_type: "refresh_token",
+          refresh_token: user.dataValues.refresh_token,
+        },
+        {
+          headers: {
+            Authorization: "Basic " + btoa(clientID + ":" + clientSecret),
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      await db.Customer.upsert({
+        customer_id: user.customer_id,
+        name: user.customer_name,
+        access_token: response.data.access_token,
+        refresh_token: response.data.refresh_token,
+      });
+    }
+
     res.send("success");
   } catch (error) {
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
@@ -414,8 +435,6 @@ app.get("/getRefreshToken", async (req, res) => {
     console.log(error);
   }
 });
-
-
 
 // db.dropDB();
 // db.createDB()
