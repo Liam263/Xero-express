@@ -201,7 +201,7 @@ app.get("/getData", async (req, res) => {
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
-    console.log(error.data);
+    console.log(error);
     // await t.rollback();
   }
 });
@@ -377,12 +377,12 @@ app.get("/getRefreshToken", async (req, res) => {
   try {
     // console.log('user: ', user)
     const Users = await db.Customer.findAll()
-    console.log('users: ', Users)
+    console.log('users TOKEN: ', Users[0].dataValues.refresh_token)
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: Users[0].dataValues.refresh_token,
+        refresh_token: REFRESH_TOKEN,
       },
       {
         headers: {
@@ -410,7 +410,7 @@ app.get("/getRefreshToken", async (req, res) => {
   } catch (error) {
     console.log("Refresh token in ERROR: ", REFRESH_TOKEN);
     console.log("Access token in ERROR: ", ACCESS_TOKEN);
-    console.log(error.data);
+    console.log(error);
   }
 });
 
