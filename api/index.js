@@ -198,10 +198,10 @@ app.get("/getData", async (req, res) => {
     console.log("ENTITY ID :", ENTITY_ID);
     res.json(bankTransactions);
   } catch (error) {
+    console.log(error);
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
-    console.log(error);
     // await t.rollback();
   }
 });
@@ -377,7 +377,7 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    ENTITY_ID = Entity[Entity.length -1].dataValues.entity_id; // temporary get the second lastest entity
+    ENTITY_ID = Entity[Entity.length -1].dataValues.entity_id; // temporary get the  lastest entity
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
     console.log("ENTITY_ID : ", ENTITY_ID);
