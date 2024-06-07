@@ -351,10 +351,10 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    const Users = await db.Customer.findAll()
+    const Users = await db.Customer.findAll({order : [['updatedAt','DESC']]})
     // REFRESH_TOKEN = Users[0].dataValues.refresh_token
     console.log("User: ", Users)
-    const Entity = await db.Entity.findAll()
+    const Entity = await db.Entity.findAll({order : [['updatedAt','DESC']]})
     console.log("Entity: ", Entity)
     console.log('USERS: ', Users)
     const response = await axios.post(
@@ -377,6 +377,8 @@ app.get("/getRefreshToken", async (req, res) => {
       access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
     });
+
+    // user.customer_id = Users[Users.length-1].dataValues.customer_id;
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
     ENTITY_ID = Entity[Entity.length -1].dataValues.entity_id; // temporary get the  lastest entity
