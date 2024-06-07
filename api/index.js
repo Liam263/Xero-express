@@ -359,7 +359,7 @@ app.get("/getRefreshToken", async (req, res) => {
       "https://identity.xero.com/connect/token",
       {
         grant_type: "refresh_token",
-        refresh_token: Users[Users.length-1].dataValues.refresh_token,
+        refresh_token: Users[Users.length-1].dataValues.refresh_token, // get the latest user only
       },
       {
         headers: {
@@ -377,7 +377,7 @@ app.get("/getRefreshToken", async (req, res) => {
     });
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    ENTITY_ID = Entity[Entity.length -2].dataValues.entity_id; 
+    ENTITY_ID = Entity[Entity.length -1].dataValues.entity_id; // temporary get the second lastest entity
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
     console.log("ENTITY_ID : ", ENTITY_ID);
