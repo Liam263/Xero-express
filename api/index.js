@@ -353,7 +353,9 @@ app.get("/getRefreshToken", async (req, res) => {
   try {
     const Users = await db.Customer.findAll()
     // REFRESH_TOKEN = Users[0].dataValues.refresh_token
+    console.log("User: ", Users)
     const Entity = await db.Entity.findAll()
+    console.log("Entity: ", Entity)
     console.log('USERS: ', Users)
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
