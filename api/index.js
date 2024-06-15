@@ -207,9 +207,9 @@ app.get("/getData", async (req, res) => {
       }
     count += BATCH_SIZE;
     await t.commit();
-    // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
-    // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
-    // console.log("ENTITY ID :", ENTITY_ID);
+    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    console.log("ENTITY ID :", ENTITY_ID);
     console.log("ASSETS count: ", assets.length);
     console.log("Accounts count: ",accounts.length);
     console.log("Bank Transaction count: ", bankTransactions.length);
@@ -217,9 +217,9 @@ app.get("/getData", async (req, res) => {
     res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
-    // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
-    // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
-    // console.log("ENTITY ID :", ENTITY_ID);
+    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    console.log("ENTITY ID :", ENTITY_ID);
     console.log("count: ", count);
     // await t.rollback();
   }
