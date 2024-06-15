@@ -54,6 +54,12 @@ function parseXeroTimestamp(xeroTimestamp) {
 }
 app.get("/getData", async (req, res) => {
   try {
+    if(!ACCESS_TOKEN || !ENTITY_ID){
+      console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
+      console.log("ENTITY_ID: ", ENTITY_ID);
+      return res.send('ACCESS_TOKEN or ENTITY is missing');
+    }
+
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
