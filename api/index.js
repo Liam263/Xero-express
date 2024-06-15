@@ -59,7 +59,7 @@ app.get("/getData", async (req, res) => {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
             "Xero-Tenant-Id": ENTITY_ID,
           },
-          params: { status: "DRAFT", pageSize: 100 }, //could be Draft | Registered | Disposed
+          params: { status: "REGISTERED", pageSize: 100 }, //could be Draft | Registered | Disposed
         }),
         axios.get(`https://api.xero.com/api.xro/2.0/Accounts`, {
           headers: {
@@ -80,7 +80,7 @@ app.get("/getData", async (req, res) => {
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
 
     const t = await sequelize.transaction();
-    const BATCH_SIZE = 20;
+    const BATCH_SIZE = 100;
     if (count >= max(assets.length, accounts.length, bankTransactions.length)) {
       count = 0;
     }
@@ -212,16 +212,16 @@ app.get("/getData", async (req, res) => {
     }
 
     await t.commit();
-    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
-    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
-    console.log("ENTITY ID :", ENTITY_ID);
+    // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    // console.log("ENTITY ID :", ENTITY_ID);
     console.log("Count :", count);
     res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
-    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
-    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
-    console.log("ENTITY ID :", ENTITY_ID);
+    // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    // console.log("ENTITY ID :", ENTITY_ID);
     console.log("count: ", count);
     // await t.rollback();
   }
