@@ -81,12 +81,12 @@ app.get("/getData", async (req, res) => {
 
     const t = await sequelize.transaction();
     const BATCH_SIZE = 100;
-    if (count >= max(assets.length, accounts.length, bankTransactions.length)) {
+    if (count >= Math.max(assets.length, accounts.length, bankTransactions.length)) {
       count = 0;
     }
 
-    for (count; count < assets.length; count += BATCH_SIZE) {
-      const assetsBatch = assets.slice(count, BATCH_SIZE);
+    for (let i = count; i < assets.length; i += BATCH_SIZE) {
+      const assetsBatch = assets.slice(i,i+ BATCH_SIZE);
 
       for (const item of assetsBatch) {
         await db.Assets.upsert(
@@ -141,8 +141,8 @@ app.get("/getData", async (req, res) => {
       }
     }
 
-    for (count; count < accounts.length; count += BATCH_SIZE) {
-      const accountsBatch = accounts.slice(count, BATCH_SIZE);
+    for (let i = count; i < accounts.length; i += BATCH_SIZE) {
+      const accountsBatch = accounts.slice(i,i+ BATCH_SIZE);
       for (const account of accountsBatch) {
         await db.ChartOfAccounts.upsert(
           {
@@ -162,8 +162,8 @@ app.get("/getData", async (req, res) => {
       }
     }
 
-    for (count; count < bankTransactions.length; count += BATCH_SIZE) {
-      const transactionBatch = bankTransactions.slice(count, BATCH_SIZE);
+    for (let i = count; i < bankTransactions.length; i += BATCH_SIZE) {
+      const transactionBatch = bankTransactions.slice(i,i+ BATCH_SIZE);
 
       for (const transaction of transactionBatch) {
         await db.BankTransactions.upsert(
@@ -210,7 +210,7 @@ app.get("/getData", async (req, res) => {
         );
       }
     }
-
+    count += BATCH_SIZE;
     await t.commit();
     // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
