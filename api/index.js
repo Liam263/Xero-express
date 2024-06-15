@@ -87,8 +87,7 @@ app.get("/getData", async (req, res) => {
       count = 0;
     }
 
-    for (let i = count; i < assets.length; i += BATCH_SIZE) {
-      const assetsBatch = assets.slice(i,i+ BATCH_SIZE);
+      const assetsBatch = assets.slice(count,count+ BATCH_SIZE);
 
       for (const item of assetsBatch) {
         await db.Assets.upsert(
@@ -141,10 +140,8 @@ app.get("/getData", async (req, res) => {
           { transaction: t }
         );
       }
-    }
 
-    for (let i = count; i < accounts.length; i += BATCH_SIZE) {
-      const accountsBatch = accounts.slice(i,i+ BATCH_SIZE);
+      const accountsBatch = accounts.slice(count,count+ BATCH_SIZE);
       for (const account of accountsBatch) {
         await db.ChartOfAccounts.upsert(
           {
@@ -162,11 +159,8 @@ app.get("/getData", async (req, res) => {
           { transaction: t }
         );
       }
-    }
 
-    for (let i = count; i < bankTransactions.length; i += BATCH_SIZE) {
-      const transactionBatch = bankTransactions.slice(i,i+ BATCH_SIZE);
-
+      const transactionBatch = bankTransactions.slice(count,count+ BATCH_SIZE);
       for (const transaction of transactionBatch) {
         await db.BankTransactions.upsert(
           {
@@ -211,7 +205,6 @@ app.get("/getData", async (req, res) => {
           { transaction: t }
         );
       }
-    }
     count += BATCH_SIZE;
     await t.commit();
     // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
