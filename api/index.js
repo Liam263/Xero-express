@@ -17,7 +17,7 @@ const clientID = "7D3D642AB4AF400B9119AE2D04BAFEAC";
 const clientSecret = "MMxNGeiM0iW5fmQ_j9jXLSL1MGzhAgXVRFTqZ9sGcM92W8Wf";
 const redirectURL = "https://xero-express.vercel.app/callback";
 var user = {};
-var count = 0;
+var count = 1190;
 const BATCH_SIZE = 70;
 
 const accountTypes = [
@@ -217,9 +217,9 @@ app.get("/getData", async (req, res) => {
     res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
-    console.log("ACCESS TOKEN :", ACCESS_TOKEN);
-    console.log("REFRESH TOKEN :", REFRESH_TOKEN);
-    console.log("ENTITY ID :", ENTITY_ID);
+    // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
+    // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
+    // console.log("ENTITY ID :", ENTITY_ID);
     console.log("count: ", count);
     // await t.rollback();
   }
