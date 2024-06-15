@@ -215,6 +215,9 @@ app.get("/getData", async (req, res) => {
     // console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     // console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     // console.log("ENTITY ID :", ENTITY_ID);
+    console.log("ASSETS count: ", assets.length);
+    console.log("Accounts count: ",accounts.length);
+    console.log("Bank Transaction count: ", bankTransactions.length);
     console.log("Count :", count);
     res.send("SUCCESSFUL");
   } catch (error) {
