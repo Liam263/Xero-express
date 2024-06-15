@@ -215,14 +215,14 @@ app.get("/getData", async (req, res) => {
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
-    console.log("BATCH SIZE :", BATCH_SIZE);
+    console.log("Count :", count);
     res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
-    console.log("BATCH SIZE: ", BATCH_SIZE);
+    console.log("count: ", count);
     // await t.rollback();
   }
 });
