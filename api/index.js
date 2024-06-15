@@ -18,7 +18,7 @@ const clientSecret = "MMxNGeiM0iW5fmQ_j9jXLSL1MGzhAgXVRFTqZ9sGcM92W8Wf";
 const redirectURL = "https://xero-express.vercel.app/callback";
 var user = {};
 var count = 0;
-const BATCH_SIZE = 20;
+const BATCH_SIZE = 200;
 
 const accountTypes = [
   { code: "BANK", name: "Bank account" },
