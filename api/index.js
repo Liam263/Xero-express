@@ -57,7 +57,8 @@ app.get("/getData", async (req, res) => {
     if(!ACCESS_TOKEN || !ENTITY_ID){
       console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
       console.log("ENTITY_ID: ", ENTITY_ID);
-      return res.send('ACCESS_TOKEN or ENTITY is missing');
+      console.log("COUNT: ", count);
+      return res.status(404).send('ACCESS_TOKEN or ENTITY_ID is missing');
     }
 
     const [assetsResponse, accountsResponse, bankTransactionsResponse] =
