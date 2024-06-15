@@ -17,7 +17,7 @@ const clientID = "7D3D642AB4AF400B9119AE2D04BAFEAC";
 const clientSecret = "MMxNGeiM0iW5fmQ_j9jXLSL1MGzhAgXVRFTqZ9sGcM92W8Wf";
 const redirectURL = "https://xero-express.vercel.app/callback";
 var user = {};
-var count = 1190;
+var count = 0;
 const BATCH_SIZE = 70;
 
 const accountTypes = [

@@ -288,7 +288,7 @@ const BankTransactions = sequelize.define('Bank_Transactions', {
   },
   account_code: {
     type: DataTypes.STRING(50),
-    allowNull: false,
+    allowNull: true,
     // references: {
     //   model: ChartOfAccounts,
     //   key: 'account_code'
