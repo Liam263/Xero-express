@@ -80,7 +80,7 @@ app.get("/getData", async (req, res) => {
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
 
     const t = await sequelize.transaction();
-    const BATCH_SIZE = 50;
+    const BATCH_SIZE = 20;
     if (count >= Math.max(assets.length, accounts.length, bankTransactions.length)) {
       count = 0;
     }
