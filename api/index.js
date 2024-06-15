@@ -216,7 +216,7 @@ app.get("/getData", async (req, res) => {
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
     console.log("ENTITY ID :", ENTITY_ID);
     console.log("BATCH SIZE :", BATCH_SIZE);
-    res.json(bankTransactions);
+    res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
