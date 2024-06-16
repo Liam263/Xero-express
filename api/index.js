@@ -59,7 +59,6 @@ app.get("/getData", async (req, res) => {
       console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
       console.log("ENTITY_ID: ", ENTITY_ID);
       console.log("COUNT: ", count);
-      res.redirect("/getRefreshToken");
       return res.status(404).send('ACCESS_TOKEN or ENTITY_ID is missing');
     }
 
