@@ -18,8 +18,9 @@ const clientSecret = "MMxNGeiM0iW5fmQ_j9jXLSL1MGzhAgXVRFTqZ9sGcM92W8Wf";
 const redirectURL = "https://xero-express.vercel.app/callback";
 var user = {};
 var count = 8120;
+var maxLength = 0; 
 const BATCH_SIZE = 70;
-
+var currentUserIndex=0;
 const accountTypes = [
   { code: "BANK", name: "Bank account" },
   { code: "CURRENT", name: "Current Asset account" },
@@ -89,9 +90,11 @@ app.get("/getData", async (req, res) => {
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
 
     const t = await sequelize.transaction();
-    const maxLength = Math.max(assets.length, accounts.length, bankTransactions.length)
-    if (count >= maxLength) {
-      count = 0;
+    maxLength = Math.max(assets.length, accounts.length, bankTransactions.length)
+    if (count >= maxLength + 70) {
+      console.log("Count: ", count)
+      console.log("Count max is reached")
+      count = 0; 
     }
 
       const assetsBatch = assets.slice(count,count+ BATCH_SIZE);
@@ -376,9 +379,13 @@ const getConnection = async (req, res) => {
 
 app.get("/getRefreshToken", async (req, res) => {
   try {
-    const Users = await db.Customer.findAll({ order: [["updatedAt", "DESC"]] });
-    // REFRESH_TOKEN = Users[0].dataValues.refresh_token
-    const Entity = await db.Entity.findAll({ order: [["updatedAt", "DESC"]] });
+    
+
+    const [Users, Entity] = await Promise.all([
+      db.Customer.findAll({ order: [["updatedAt", "DESC"]] }),
+      db.Entity.findAll({ order: [["updatedAt", "DESC"]] })
+    ]);
+    
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
       {
