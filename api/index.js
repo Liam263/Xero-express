@@ -90,14 +90,32 @@ app.get("/getData", async (req, res) => {
     const count = EntityResponse.dataValues.count
     const t = await sequelize.transaction();
     maxLength = Math.max(assets.length, accounts.length, bankTransactions.length)
-    if (count >= maxLength + 70) {
+
+    if (count >= maxLength + BATCH_SIZE) {
       console.log("Count: ", count)
       console.log("Count max is reached")
-      count = 0; 
+      await db.Entity.upsert(
+        {
+          entity_id: ENTITY_ID,
+          count: 0,
+        },
+        {
+          transaction: t,
+        }
+      );
     }
 
-      const assetsBatch = assets.slice(count,count+ BATCH_SIZE);
+    await db.Entity.upsert(
+      {
+        entity_id: ENTITY_ID,
+        count: count+BATCH_SIZE,
+      },
+      {
+        transaction: t,
+      }
+    );
 
+      const assetsBatch = assets.slice(count,count+ BATCH_SIZE);
       for (const item of assetsBatch) {
         await db.Assets.upsert(
           {
@@ -214,7 +232,6 @@ app.get("/getData", async (req, res) => {
           { transaction: t }
         );
       }
-    count += BATCH_SIZE;
     await t.commit();
     console.log("ACCESS TOKEN :", ACCESS_TOKEN);
     console.log("REFRESH TOKEN :", REFRESH_TOKEN);
@@ -343,6 +360,7 @@ const getConnection = async (req, res) => {
             entity_id: tenant.tenantId,
             name: tenant.tenantName,
             customer_id: user.customer_id,
+            count: 0
           },
           {
             transaction: t,

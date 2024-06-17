@@ -48,6 +48,9 @@ const Entity = sequelize.define('Entity', {
       model: Customer, 
       key: 'customer_id'
     }
+  },
+  count: {
+    type:DataTypes.INTEGER
   }
 });
 
