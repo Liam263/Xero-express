@@ -17,8 +17,6 @@ const clientID = "7D3D642AB4AF400B9119AE2D04BAFEAC";
 const clientSecret = "MMxNGeiM0iW5fmQ_j9jXLSL1MGzhAgXVRFTqZ9sGcM92W8Wf";
 const redirectURL = "https://xero-express.vercel.app/callback";
 var user = {};
-var count = 8120;
-var maxLength = 0; 
 const BATCH_SIZE = 70;
 var currentUserIndex=0;
 const accountTypes = [
@@ -58,11 +56,11 @@ app.get("/getData", async (req, res) => {
     if(!ACCESS_TOKEN || !ENTITY_ID){
       console.log("ACCESS_TOKEN: ", ACCESS_TOKEN);
       console.log("ENTITY_ID: ", ENTITY_ID);
-      console.log("COUNT: ", count);
+      
       return res.status(404).send('ACCESS_TOKEN or ENTITY_ID is missing');
     }
 
-    const [assetsResponse, accountsResponse, bankTransactionsResponse] =
+    const [assetsResponse, accountsResponse, bankTransactionsResponse, EntityResponse] =
       await Promise.all([
         axios.get(`https://api.xero.com/assets.xro/1.0/Assets`, {
           headers: {
@@ -83,12 +81,13 @@ app.get("/getData", async (req, res) => {
             "Xero-Tenant-Id": ENTITY_ID,
           },
         }),
+        db.Entity.findByPk(ENTITY_ID)
       ]);
 
     const assets = assetsResponse.data.items;
     const accounts = accountsResponse.data.Accounts;
     const bankTransactions = bankTransactionsResponse.data.BankTransactions;
-
+    const count = EntityResponse.dataValues.count
     const t = await sequelize.transaction();
     maxLength = Math.max(assets.length, accounts.length, bankTransactions.length)
     if (count >= maxLength + 70) {
@@ -223,7 +222,7 @@ app.get("/getData", async (req, res) => {
     console.log("ASSETS count: ", assets.length);
     console.log("Accounts count: ",accounts.length);
     console.log("Bank Transaction count: ", bankTransactions.length);
-    console.log("Count :", count);
+    console.log(" ENTITY object", EntityResponse)
     res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
