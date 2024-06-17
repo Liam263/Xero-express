@@ -102,6 +102,7 @@ app.get("/getData", async (req, res) => {
           transaction: t,
         }
       );
+
     }
 
     await db.Entity.update(
@@ -237,7 +238,6 @@ app.get("/getData", async (req, res) => {
     console.log("ASSETS count: ", assets.length);
     console.log("Accounts count: ",accounts.length);
     console.log("Bank Transaction count: ", bankTransactions.length);
-    console.log(" ENTITY object", EntityResponse)
     res.send("SUCCESSFUL");
   } catch (error) {
     console.log(error);
@@ -396,10 +396,10 @@ app.get("/getRefreshToken", async (req, res) => {
   try {
     
 
-    const [Users, Entity] = await Promise.all([
-      db.Customer.findAll({ order: [["updatedAt", "DESC"]] }),
-      db.Entity.findAll({ order: [["updatedAt", "DESC"]] })
-    ]);
+    
+      const Users = db.Customer.findAll({ order: [["updatedAt", "DESC"]] })
+
+      const Entity = db.Entity.findAll({where: {customer_id : Users[0].dataValues.customer_id}})
     
     const response = await axios.post(
       "https://identity.xero.com/connect/token",
@@ -425,7 +425,11 @@ app.get("/getRefreshToken", async (req, res) => {
     // user.customer_id = Users[Users.length-1].dataValues.customer_id;
     ACCESS_TOKEN = response.data.access_token;
     REFRESH_TOKEN = response.data.refresh_token;
-    ENTITY_ID = Entity[0].dataValues.entity_id; // temporary get the  lastest entity
+    // ENTITY_ID = Entity[0].dataValues.entity_id; // temporary get the  lastest entity
+    //test
+    for(const entity of Entity){
+        ENTITY_ID = entity.dataValues.entity_id
+    }
     console.log("Refresh token after: ", REFRESH_TOKEN);
     console.log("Access token after: ", ACCESS_TOKEN);
     console.log("ENTITY_ID : ", ENTITY_ID);
