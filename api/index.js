@@ -111,6 +111,8 @@ app.get("/getData", async (req, res) => {
           transaction: t,
         }
       );
+
+      return res.send("COUNT MAX REACHED")
     }
 
     await db.Entity.update(
