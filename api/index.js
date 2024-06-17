@@ -94,22 +94,20 @@ app.get("/getData", async (req, res) => {
     if (count >= maxLength + BATCH_SIZE) {
       console.log("Count: ", count)
       console.log("Count max is reached")
-      await db.Entity.upsert(
+      await db.Entity.update(
         {
-          entity_id: ENTITY_ID,
           count: 0,
-        },
+        },{where: {entity_id: ENTITY_ID}},
         {
           transaction: t,
         }
       );
     }
 
-    await db.Entity.upsert(
+    await db.Entity.update(
       {
-        entity_id: ENTITY_ID,
-        count: count+BATCH_SIZE,
-      },
+        count: count + BATCH_SIZE,
+      },{where: {entity_id: ENTITY_ID}},
       {
         transaction: t,
       }
